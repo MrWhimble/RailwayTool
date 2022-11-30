@@ -6,6 +6,6 @@ namespace MrWhimble.RailwayMaker
 {
     public class RailwayManager : MonoBehaviour
     {
-
+        [SerializeField] public List<RailNode> nodes;
     }
 }
