@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
+    [System.Serializable]
     public class RailwayManager : MonoBehaviour
     {
-        [SerializeField] public RailwayNetwork railwayNetwork;
+        [SerializeReference] public RailwayNetwork railwayNetwork;
     }
 }
