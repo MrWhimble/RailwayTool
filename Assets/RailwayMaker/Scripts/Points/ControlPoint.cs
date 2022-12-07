@@ -5,7 +5,7 @@ namespace MrWhimble.RailwayMaker
     [System.Serializable]
     public class ControlPoint : Point
     {
-        public AnchorPoint anchorPoint;
+        [SerializeReference] public AnchorPoint anchorPoint;
 
         public float distance;
         public bool flipped;

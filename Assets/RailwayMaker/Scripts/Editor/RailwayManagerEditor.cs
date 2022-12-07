@@ -142,6 +142,7 @@ namespace MrWhimble.RailwayMaker
             
             if (changed)
             {
+                
                 EditorUtility.SetDirty(manager);
             }
                 
@@ -161,6 +162,11 @@ namespace MrWhimble.RailwayMaker
             //Handles.SphereHandleCap(-1, new Vector3(2, 0, 0), Quaternion.identity, dist*2f, EventType.Repaint);
             
             
+        }
+
+        public void OnDisable()
+        {
+            Debug.Log("Yam");
         }
     }
 }

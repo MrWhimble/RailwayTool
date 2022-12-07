@@ -7,7 +7,7 @@ namespace MrWhimble.RailwayMaker
     public class RailwayNetwork
     {
         
-        [SerializeReference]public List<Point> points;
+        public List<Point> points;
 
         public RailwayNetwork()
         {

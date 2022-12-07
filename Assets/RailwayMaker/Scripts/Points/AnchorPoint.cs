@@ -8,7 +8,7 @@ namespace MrWhimble.RailwayMaker
     {
         public Quaternion rotation;
 
-        public List<ControlPoint> controlPoints;
+        [SerializeReference] public List<ControlPoint> controlPoints;
 
         public AnchorPoint()
         {
