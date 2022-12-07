@@ -7,6 +7,8 @@ namespace MrWhimble.RailwayMaker
     [System.Serializable]
     public class RailwayManager : MonoBehaviour
     {
-        [SerializeReference] public RailwayNetwork railwayNetwork;
+        //[SerializeReference] public RailwayNetwork railwayNetwork;
+
+        [SerializeField] public RailPathData pathData;
     }
 }

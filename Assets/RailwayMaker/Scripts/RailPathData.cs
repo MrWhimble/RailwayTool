@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
-    [CreateAssetMenu(fileName = "FILENAME", menuName = "MENUNAME", order = 0)]
+    [System.Serializable]
+    [CreateAssetMenu(fileName = "RailPathData", menuName = "MrWhimble/Rail Path Data", order = 0)]
     public class RailPathData : ScriptableObject
     {
         public List<PathPoint> pathPoints;
@@ -11,6 +12,9 @@ namespace MrWhimble.RailwayMaker
         public List<Point> GetPoints()
         {
             List<Point> ret = new List<Point>();
+
+            if (pathPoints == null || pathPoints.Count == 0)
+                return ret;
 
             foreach (var pp in pathPoints)
             {
