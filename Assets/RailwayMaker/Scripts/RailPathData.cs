@@ -8,6 +8,7 @@ namespace MrWhimble.RailwayMaker
     public class RailPathData : ScriptableObject
     {
         public List<PathPoint> pathPoints;
+        public List<PathCurve> pathCurves;
 
         public List<Point> GetPoints()
         {
@@ -61,6 +62,29 @@ namespace MrWhimble.RailwayMaker
             
             return ret;
         }
+
+        public List<BezierCurve> GetCurves(List<Point> p)
+        {
+            List<BezierCurve> ret = new List<BezierCurve>();
+
+            if (pathPoints == null || pathPoints.Count == 0)
+                return ret;
+            if (pathCurves == null || pathCurves.Count == 0)
+                return ret;
+            if (p == null || p.Count == 0)
+                return ret;
+
+            for (int i = 0; i < pathCurves.Count; i++)
+            {
+                ret.Add(new BezierCurve(
+                    (AnchorPoint)p[pathCurves[i].start],
+                    (ControlPoint)p[pathCurves[i].controlStart],
+                    (ControlPoint)p[pathCurves[i].controlEnd],
+                    (AnchorPoint)p[pathCurves[i].end]));
+            }
+
+            return ret;
+        }
     }
 
     [System.Serializable]
@@ -77,5 +101,14 @@ namespace MrWhimble.RailwayMaker
         public Quaternion rotation;
         public bool flipped;
         public List<int> connectedPoints;
+    }
+
+    [System.Serializable]
+    public struct PathCurve
+    {
+        public int start;
+        public int controlStart;
+        public int controlEnd;
+        public int end;
     }
 }

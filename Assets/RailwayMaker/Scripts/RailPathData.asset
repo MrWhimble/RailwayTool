@@ -12,24 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 067e8b0f20214d19aef09961053b701d, type: 3}
   m_Name: RailPathData
   m_EditorClassIdentifier: 
-  pathPoints:
-  - pointType: 0
-    position: {x: -30.2646, y: -5.1839585, z: 3.2531586}
-    rotation: {x: -0.35098854, y: 0.72568697, z: 0.1559818, w: 0.5708374}
-    flipped: 0
-    connectedPoints: 01000000
-  - pointType: 1
-    position: {x: -12.067493, y: 10.687265, z: -4.3300943}
-    rotation: {x: -0.35098854, y: 0.72568697, z: 0.1559818, w: 0.5708374}
-    flipped: 0
-    connectedPoints: 00000000
-  - pointType: 1
-    position: {x: 9.929895, y: -1.9804981, z: 6.978858}
-    rotation: {x: -0.35098854, y: 0.72568697, z: 0.1559818, w: 0.5708374}
-    flipped: 1
-    connectedPoints: 03000000
-  - pointType: 0
-    position: {x: 7.413828, y: 2.3286796, z: 0.86032295}
-    rotation: {x: 0.8117644, y: -0.4780347, z: -0.2927382, w: -0.16378574}
-    flipped: 1
-    connectedPoints: 02000000
+  pathPoints: []
+  pathCurves: []

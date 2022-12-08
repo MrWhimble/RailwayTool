@@ -12,6 +12,14 @@ namespace MrWhimble.RailwayMaker
         private SerializedObject railPathObj;
 
         private List<Point> points;
+        private List<BezierCurve> curves;
+
+        private int selectedPoint = -1;
+        private Vector3 selectedPointRot;
+
+        //private int pointControlIDIndex;
+        private List<int> pointControlIDs;
+        private int prevHotControl;
 
 
         private void OnEnable()
@@ -26,72 +34,246 @@ namespace MrWhimble.RailwayMaker
                 Debug.Log("railPathProp == null");
                 return;
             }
+
+
+            RailPathData data = (RailPathData) railPathObj.targetObject;
+            points = data.GetPoints();
+            curves = data.GetCurves(points);
+            
+            //Debug.Log(points.Count);
+            //Debug.Log(curves.Count);
+
+            if (points.Count == 0)
+            {
+                points.Add(new AnchorPoint());
+                points.Add(new ControlPoint());
+                points.Add(new ControlPoint());
+                points.Add(new AnchorPoint());
+
+                ((ControlPoint) points[2]).flipped = true;
+
+                ((AnchorPoint) points[0]).AddControlPoint((ControlPoint) points[1]);
+                ((AnchorPoint) points[3]).AddControlPoint((ControlPoint) points[2]);
+
+                ((AnchorPoint) points[0]).UpdatePosition(new Vector3(0, 0, 0));
+                ((AnchorPoint) points[3]).UpdatePosition(new Vector3(4, 0, 0));
+
+                ((ControlPoint) points[1]).UpdatePosition(new Vector3(1, 1, 0));
+                ((ControlPoint) points[2]).UpdatePosition(new Vector3(3, -1, 0));
+
+                curves.Add(new BezierCurve(
+                    (AnchorPoint) points[0],
+                    (ControlPoint) points[1],
+                    (ControlPoint) points[2],
+                    (AnchorPoint) points[3]));
+            }
+
+            pointControlIDs = new List<int>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                pointControlIDs.Add(-1);
+            }
+            
+        }
+
+        public override void OnInspectorGUI()
+        {
+            //base.OnInspectorGUI();
+
+            int prevSelectedPoint = selectedPoint;
+            selectedPoint = EditorGUILayout.IntField("Current Point Index", selectedPoint);
+            if (prevSelectedPoint != selectedPoint)
+            {
+                if (selectedPoint >= 0 && selectedPoint < points.Count)
+                {
+                    if (points[selectedPoint].GetType() == typeof(AnchorPoint))
+                        selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
+                }
+                // update current curve
+            }
+
+            Vector3 prevV3;
+            Vector3 newV3;
+            float prevFloat;
+            float newFloat;
+            bool prevBool;
+            bool newBool;
+
+            bool updateScene = false;
+
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            
+            if (selectedPoint >= 0 && selectedPoint < points.Count)
+            {
+                switch (points[selectedPoint])
+                {
+                    case AnchorPoint p:
+                    {
+                        EditorGUILayout.LabelField("Type: Anchor");
+                        
+                        prevV3 = p.position;
+                        newV3 = EditorGUILayout.Vector3Field("Position", p.position);
+                        if (prevV3 != newV3)
+                        {
+                            p.UpdatePosition(newV3);
+                            updateScene = true;
+                        }
+
+                        prevV3 = selectedPointRot;
+                        newV3 = EditorGUILayout.Vector3Field("Rotation", selectedPointRot);
+                        if (prevV3 != newV3)
+                        {
+                            selectedPointRot = newV3;
+                            p.rotation = Quaternion.Euler(newV3);
+                            p.UpdateControls();
+                            updateScene = true;
+                        }
+                        
+                        break;
+                    }
+                    
+                    case ControlPoint p:
+                    {
+                        EditorGUILayout.LabelField("Type: Control");
+                        //p.position = EditorGUILayout.Vector3Field("Position", p.position);
+                        prevV3 = p.position;
+                        newV3 = EditorGUILayout.Vector3Field("Position", p.position);
+                        if (prevV3 != newV3)
+                        {
+                            p.UpdatePosition(newV3);
+                            updateScene = true;
+                        }
+                        
+                        prevFloat = p.distance;
+                        newFloat = EditorGUILayout.FloatField("Distance", p.distance);
+                        if (prevFloat != newFloat)
+                        {
+                            p.distance = newFloat;
+                            p.UpdatePosition();
+                            updateScene = true;
+                        }
+
+                        prevBool = p.flipped;
+                        newBool = EditorGUILayout.Toggle("Flipped", p.flipped);
+                        if (prevBool != newBool)
+                        {
+                            p.flipped = newBool;
+                            p.UpdatePosition();
+                            updateScene = true;
+                        }
+                        break;
+                    }
+                }
+
+                if (updateScene)
+                {
+                    SceneView.RepaintAll();
+                }
                 
-
-            points = ((RailPathData)railPathObj.targetObject).GetPoints();
-
-            Debug.Log(points.Count);
-
-            if (points.Count != 0)
-                return;
-            points.Add(new AnchorPoint());
-            points.Add(new ControlPoint());
-            points.Add(new ControlPoint());
-            points.Add(new AnchorPoint());
-
-            ((ControlPoint)points[2]).flipped = true;
-
-            ((AnchorPoint)points[0]).AddControlPoint((ControlPoint)points[1]);
-            ((AnchorPoint)points[3]).AddControlPoint((ControlPoint)points[2]);
-
-            ((AnchorPoint)points[0]).UpdatePosition(new Vector3(0, 0, 0));
-            ((AnchorPoint)points[3]).UpdatePosition(new Vector3(4, 0, 0));
-
-            ((ControlPoint)points[1]).UpdatePosition(new Vector3(1, 1, 0));
-            ((ControlPoint)points[2]).UpdatePosition(new Vector3(3, -1, 0));
-
-            Debug.Log(points.Count);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Invalid Selected Point");
+            }
+            EditorGUILayout.EndVertical();
+            
+            
         }
 
         private void OnSceneGUI()
         {
             Vector3 handlePos;
+            bool updateInspector = false;
+            //pointControlIDIndex = 0;
             for (int i = 0; i < points.Count; i++)
             {
                 switch (points[i])
                 {
-                    case AnchorPoint anchor:
+                    case AnchorPoint p:
+                    {
+                        Handles.color = Color.blue;
+
+                        if (selectedPoint == i)
                         {
-                            Handles.color = Color.blue;
-                            handlePos = Handles.PositionHandle(anchor.position, anchor.rotation);
-                            if (anchor.position != handlePos)
-                            {
-                                anchor.UpdatePosition(handlePos);
-                                //updatePoint = true;
-                            }
-                            break;
+                            if (Tools.pivotRotation == PivotRotation.Local)
+                                handlePos = Handles.PositionHandle(p.position, p.rotation);
+                            else
+                                handlePos = Handles.PositionHandle(p.position, Quaternion.identity);
+                            pointControlIDs[i] = -1;
+                        }
+                        else
+                        {
+                            pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, p.rotation, 0.5f, Vector3.zero,
+                                Handles.SphereHandleCap);
                         }
 
-                    case ControlPoint control:
+                        if (p.position != handlePos)
                         {
-                            Handles.color = Color.red;
-                            handlePos = Handles.PositionHandle(control.position, Quaternion.identity);
-                            if (control.position != handlePos)
-                            {
-                                control.UpdatePosition(handlePos);
-                                //updatePoint = true;
-                            }
-                            break;
+                            p.UpdatePosition(handlePos);
+                            selectedPointRot = p.rotation.eulerAngles;
+                            updateInspector = true;
+                            //updatePoint = true;
                         }
+                        break;
+                    }
+
+                    case ControlPoint p:
+                    {
+                        Handles.color = Color.red;
+                        if (selectedPoint == i)
+                        {
+                            handlePos = Handles.PositionHandle(p.position, Quaternion.identity);
+                            pointControlIDs[i] = -1;
+                        }
+                        else
+                        {
+                            pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, Quaternion.identity, 0.5f, Vector3.zero,
+                                Handles.SphereHandleCap);
+                        }
+
+                        if (p.position != handlePos)
+                        {
+                            p.UpdatePosition(handlePos);
+                            selectedPointRot = p.anchorPoint.rotation.eulerAngles;
+                            updateInspector = true;
+                            //updatePoint = true;
+                        }
+                        break;
+                    }
                 }
             }
 
-            Handles.DrawBezier(
-            points[0].position,
-            points[3].position,
-            points[1].position,
-            points[2].position,
-            Color.magenta, null, 2);
+            
+
+            for (int i = 0; i < curves.Count; i++)
+            {
+                Handles.DrawBezier(
+                    curves[i].start.position,
+                    curves[i].end.position,
+                    curves[i].controlStart.position,
+                    curves[i].controlEnd.position,
+                    Color.magenta, null, 2);
+            }
+
+            
+            if (prevHotControl != GUIUtility.hotControl && Event.current.shift)
+            {
+                if (GUIUtility.hotControl != 0)
+                {
+                    selectedPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                    prevHotControl = GUIUtility.hotControl;
+
+                    updateInspector = true;
+                }
+            }
+            
+            
+            if (updateInspector)
+            {
+                Repaint();
+            }
         }
 
         private void OnDisable()
@@ -101,6 +283,7 @@ namespace MrWhimble.RailwayMaker
             railPathObj.Update();
 
             //SerializedProperty railPathPointsProp = railPathProp.FindPropertyRelative("pathPoints");
+            /*
             SerializedProperty railPathPointsProp = railPathObj.GetIterator();
             do
             {
@@ -110,8 +293,10 @@ namespace MrWhimble.RailwayMaker
                     break;
                 }
             } while (railPathPointsProp.Next(true));
-
-            //SerializedProperty railPathPointsProp = railPathObj.FindProperty("pathPoints");
+            */
+            
+            SerializedProperty railPathPointsProp = railPathObj.FindProperty("pathPoints");
+            SerializedProperty railPathCurvesProp = railPathObj.FindProperty("pathCurves");
 
             if (railPathPointsProp == null)
             {
@@ -163,7 +348,30 @@ namespace MrWhimble.RailwayMaker
                 }
             }
 
+            railPathCurvesProp.ClearArray();
+            
+            for (int i = 0; i < curves.Count; i++)
+            {
+                railPathCurvesProp.InsertArrayElementAtIndex(i);
+                SerializedProperty curveProp = railPathCurvesProp.GetArrayElementAtIndex(i);
+                SerializedProperty curveStartProp = curveProp.FindPropertyRelative("start");
+                SerializedProperty curveControlStartProp = curveProp.FindPropertyRelative("controlStart");
+                SerializedProperty curveControlEndProp = curveProp.FindPropertyRelative("controlEnd");
+                SerializedProperty curveEndProp = curveProp.FindPropertyRelative("end");
+
+                curveStartProp.intValue = points.IndexOf(curves[i].start);
+                curveControlStartProp.intValue = points.IndexOf(curves[i].controlStart);
+                curveControlEndProp.intValue = points.IndexOf(curves[i].controlEnd);
+                curveEndProp.intValue = points.IndexOf(curves[i].end);
+            }
+
             railPathObj.ApplyModifiedProperties();
+        }
+
+        private void CustomSphereCapFunction(int controlID, Vector3 pos, Quaternion rot, float size, EventType eventType)
+        {
+            pointControlIDs[0] = controlID;
+            Handles.SphereHandleCap(controlID, pos, rot, size, eventType);
         }
 
         /*

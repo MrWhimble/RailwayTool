@@ -40,13 +40,18 @@ namespace MrWhimble.RailwayMaker
                 dirTo = -dirTo;
             rotation = Quaternion.LookRotation(dirTo, normal);
             
+            UpdateControls(effector);
             
+        }
+
+        public void UpdateControls(ControlPoint ignore = null)
+        {
             if (controlPoints == null)
                 return;
 
             foreach (ControlPoint c in controlPoints)
             {
-                if (c == effector)
+                if (c == ignore)
                     continue;
                 c.UpdatePosition();
             }
