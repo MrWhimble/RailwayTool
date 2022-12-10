@@ -14,6 +14,13 @@ namespace MrWhimble.RailwayMaker
         {
             controlPoints = new List<ControlPoint>();
         }
+
+        public AnchorPoint(Vector3 pos, Quaternion rot)
+        {
+            position = pos;
+            rotation = rot;
+            controlPoints = new List<ControlPoint>();
+        }
         
         public void AddControlPoint(ControlPoint control)
         {
@@ -67,6 +74,17 @@ namespace MrWhimble.RailwayMaker
             foreach (ControlPoint c in controlPoints)
             {
                 c.UpdatePosition();
+            }
+        }
+
+        public void SetRotation(Quaternion r, bool updateControl)
+        {
+            rotation = r;
+            if (!updateControl) return;
+            if (controlPoints == null) return;
+            for (int i = 0; i < controlPoints.Count; i++)
+            {
+                controlPoints[i].UpdatePosition();
             }
         }
     }

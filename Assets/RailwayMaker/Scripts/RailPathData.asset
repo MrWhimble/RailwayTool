@@ -12,5 +12,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 067e8b0f20214d19aef09961053b701d, type: 3}
   m_Name: RailPathData
   m_EditorClassIdentifier: 
-  pathPoints: []
-  pathCurves: []
+  pathPoints:
+  - pointType: 0
+    position: {x: -0.010836124, y: 1.8635044, z: 4.579604}
+    rotation: {x: -0.39334148, y: -0.23006012, z: 0.086517684, w: 0.88592863}
+    flipped: 0
+    connectedPoints: 01000000
+  - pointType: 1
+    position: {x: -1.1046202, y: 3.374482, z: 5.924048}
+    rotation: {x: -0.39334148, y: -0.23006012, z: 0.086517684, w: 0.88592863}
+    flipped: 0
+    connectedPoints: 00000000
+  - pointType: 1
+    position: {x: 0.48339593, y: 2.929881, z: 9.811753}
+    rotation: {x: -0.39334148, y: -0.23006012, z: 0.086517684, w: 0.88592863}
+    flipped: 1
+    connectedPoints: 03000000
+  - pointType: 0
+    position: {x: 1.5665643, y: 3.211279, z: 8.64467}
+    rotation: {x: 0.71281046, y: 0.593963, z: 0.33736452, w: 0.15904221}
+    flipped: 1
+    connectedPoints: 02000000
+  - pointType: 0
+    position: {x: -7.345457, y: 0.58256054, z: -4.147069}
+    rotation: {x: 0.6473023, y: -0.6950674, z: 0.16128957, w: 0.26807952}
+    flipped: 1
+    connectedPoints: 05000000
+  - pointType: 1
+    position: {x: -7.748226, y: -0.8216245, z: -6.1238866}
+    rotation: {x: 0.6473023, y: -0.6950674, z: 0.16128957, w: 0.26807952}
+    flipped: 0
+    connectedPoints: 04000000
+  - pointType: 1
+    position: {x: -10.830474, y: -0.53671503, z: -9.409699}
+    rotation: {x: 0.6473023, y: -0.6950674, z: 0.16128957, w: 0.26807952}
+    flipped: 1
+    connectedPoints: 07000000
+  - pointType: 0
+    position: {x: -8.526374, y: 0.40370536, z: -9.242964}
+    rotation: {x: -0.3992451, y: -0.5542371, z: -0.6191769, w: -0.38735583}
+    flipped: 1
+    connectedPoints: 06000000
+  - pointType: 0
+    position: {x: 0.5585103, y: 2.1860912, z: 4.1355677}
+    rotation: {x: -0.23401687, y: 0.7406374, z: -0.52067566, w: -0.3543857}
+    flipped: 1
+    connectedPoints: 09000000
+  - pointType: 1
+    position: {x: -0.6599779, y: -1.8739426, z: 3.2404237}
+    rotation: {x: -0.23401687, y: 0.7406374, z: -0.52067566, w: -0.3543857}
+    flipped: 0
+    connectedPoints: 08000000
+  - pointType: 1
+    position: {x: -8.8843565, y: 3.226999, z: 13.595366}
+    rotation: {x: -0.23401687, y: 0.7406374, z: -0.52067566, w: -0.3543857}
+    flipped: 1
+    connectedPoints: 0b000000
+  - pointType: 0
+    position: {x: -6.7952194, y: 0, z: 10.795221}
+    rotation: {x: 0.70804894, y: 0.5413424, z: -0.035428498, w: 0.45206195}
+    flipped: 1
+    connectedPoints: 0a000000
+  pathCurves:
+  - start: 0
+    controlStart: 1
+    controlEnd: 2
+    end: 3
+  - start: 4
+    controlStart: 5
+    controlEnd: 6
+    end: 7
+  - start: 8
+    controlStart: 9
+    controlEnd: 10
+    end: 11

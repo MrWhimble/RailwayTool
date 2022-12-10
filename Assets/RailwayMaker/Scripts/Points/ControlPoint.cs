@@ -10,6 +10,18 @@ namespace MrWhimble.RailwayMaker
         public float distance;
         public bool flipped;
 
+        public ControlPoint()
+        {
+            
+        }
+        
+        public ControlPoint(AnchorPoint p, Vector3 pos)
+        {
+            position = pos;
+            p.AddControlPoint(this);
+            
+        }
+
         public void SetAnchorPoint(AnchorPoint p)
         {
             anchorPoint = p;
@@ -29,6 +41,12 @@ namespace MrWhimble.RailwayMaker
             dir *= distance;
             dir = anchorPoint.rotation * dir;
             position = anchorPoint.position + dir;
+        }
+
+        public void Flip()
+        {
+            flipped = !flipped;
+            UpdatePosition();
         }
     }
 }

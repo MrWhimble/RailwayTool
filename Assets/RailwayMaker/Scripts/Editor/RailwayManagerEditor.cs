@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -43,31 +44,6 @@ namespace MrWhimble.RailwayMaker
             //Debug.Log(points.Count);
             //Debug.Log(curves.Count);
 
-            if (points.Count == 0)
-            {
-                points.Add(new AnchorPoint());
-                points.Add(new ControlPoint());
-                points.Add(new ControlPoint());
-                points.Add(new AnchorPoint());
-
-                ((ControlPoint) points[2]).flipped = true;
-
-                ((AnchorPoint) points[0]).AddControlPoint((ControlPoint) points[1]);
-                ((AnchorPoint) points[3]).AddControlPoint((ControlPoint) points[2]);
-
-                ((AnchorPoint) points[0]).UpdatePosition(new Vector3(0, 0, 0));
-                ((AnchorPoint) points[3]).UpdatePosition(new Vector3(4, 0, 0));
-
-                ((ControlPoint) points[1]).UpdatePosition(new Vector3(1, 1, 0));
-                ((ControlPoint) points[2]).UpdatePosition(new Vector3(3, -1, 0));
-
-                curves.Add(new BezierCurve(
-                    (AnchorPoint) points[0],
-                    (ControlPoint) points[1],
-                    (ControlPoint) points[2],
-                    (AnchorPoint) points[3]));
-            }
-
             pointControlIDs = new List<int>();
             for (int i = 0; i < points.Count; i++)
             {
@@ -80,12 +56,18 @@ namespace MrWhimble.RailwayMaker
         {
             //base.OnInspectorGUI();
 
+            if (GUILayout.Button("Add New Curve"))
+            {
+                AddNewCurve();
+            }
+
             int prevSelectedPoint = selectedPoint;
             selectedPoint = EditorGUILayout.IntField("Current Point Index", selectedPoint);
             if (prevSelectedPoint != selectedPoint)
             {
                 if (selectedPoint >= 0 && selectedPoint < points.Count)
                 {
+                    
                     if (points[selectedPoint].GetType() == typeof(AnchorPoint))
                         selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
                 }
@@ -255,14 +237,35 @@ namespace MrWhimble.RailwayMaker
                     curves[i].controlStart.position,
                     curves[i].controlEnd.position,
                     Color.magenta, null, 2);
+
+                for (float j = 0f; j <= 1.01f; j += 0.05f)
+                {
+                    //Vector3 lerpUp = Quaternion.Lerp(curves[i].start.rotation,curves[i].end.rotation, j) * Vector3.up;
+                    Vector3 forward = curves[i].GetTangent(j);
+                    Quaternion rot = Quaternion.LookRotation(forward, Vector3.up);
+                    Vector3 up = rot * Vector3.up;
+                    
+                    
+                    
+                    float angle = Mathf.LerpAngle(curves[i].start.rotation.eulerAngles.z,
+                        curves[i].end.rotation.eulerAngles.z, j);
+
+                    up = Quaternion.AngleAxis(angle, forward) * up;
+                    
+                    //Vector3 normal = curves[i].GetTangent(j);
+                    Debug.DrawRay(curves[i].GetPosition(j), up);
+                    //Debug.DrawRay(curves[i].GetPosition(j), lerpUp, Color.red);
+                }
             }
 
             
-            if (prevHotControl != GUIUtility.hotControl && Event.current.shift)
+            if (prevHotControl != GUIUtility.hotControl && Event.current.shift && Event.current.button == 0)
             {
                 if (GUIUtility.hotControl != 0)
                 {
                     selectedPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                    if (selectedPoint != -1 && points[selectedPoint].GetType() == typeof(AnchorPoint))
+                        selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
                     prevHotControl = GUIUtility.hotControl;
 
                     updateInspector = true;
@@ -372,6 +375,172 @@ namespace MrWhimble.RailwayMaker
         {
             pointControlIDs[0] = controlID;
             Handles.SphereHandleCap(controlID, pos, rot, size, eventType);
+        }
+
+        private void AddNewCurve()
+        {
+            int index = points.Count;
+            points.Add(new AnchorPoint());
+            points.Add(new ControlPoint());
+            points.Add(new ControlPoint());
+            points.Add(new AnchorPoint());
+            
+            ((ControlPoint) points[index+2]).flipped = true;
+
+            ((AnchorPoint) points[index+0]).AddControlPoint((ControlPoint) points[index+1]);
+            ((AnchorPoint) points[index+3]).AddControlPoint((ControlPoint) points[index+2]);
+
+            ((AnchorPoint) points[index+0]).UpdatePosition(new Vector3(0, 0,0));
+            ((AnchorPoint) points[index+3]).UpdatePosition(new Vector3(4, 0,0));
+
+            ((ControlPoint) points[index+1]).UpdatePosition(new Vector3(1,0, 1));
+            ((ControlPoint) points[index+2]).UpdatePosition(new Vector3(3,0, -1));
+            
+            curves.Add(new BezierCurve(
+                (AnchorPoint) points[index+0],
+                (ControlPoint) points[index+1],
+                (ControlPoint) points[index+2],
+                (AnchorPoint) points[index+3]));
+            
+            pointControlIDs.AddRange(new List<int>{-1,-1,-1,-1});
+            
+            SceneView.RepaintAll();
+        }
+
+        private void RemovePoint(Point p)
+        {
+            List<CurvePointData> pCurves = GetCurvesWithPoint(p);
+            for (int i = pCurves.Count - 1; i >= 0; i--)
+            {
+                if (points.Contains(pCurves[i].curve.controlStart))
+                {
+                    points.Remove(pCurves[i].curve.controlStart);
+                }
+                if (points.Contains(pCurves[i].curve.controlEnd))
+                {
+                    points.Remove(pCurves[i].curve.controlEnd);
+                }
+
+                if (GetCurvesCountWithPoint(pCurves[i].curve.start) < 2)
+                {
+                    points.Remove(pCurves[i].curve.start);
+                }
+                if (GetCurvesCountWithPoint(pCurves[i].curve.end) < 2)
+                {
+                    points.Remove(pCurves[i].curve.end);
+                }
+
+                curves.Remove(pCurves[i].curve);
+            }
+        }
+
+        private void SplitCurve(BezierCurve c, float t)
+        {
+            Vector3 E = Vector3.Lerp(c.start.position, c.controlStart.position, t);
+            Vector3 F = Vector3.Lerp(c.controlStart.position, c.controlEnd.position, t);
+            Vector3 G = Vector3.Lerp(c.controlEnd.position, c.end.position, t);
+            
+            Vector3 H = Vector3.Lerp(E, F, t);
+            Vector3 J = Vector3.Lerp(F, G, t);
+            
+            Vector3 K = Vector3.Lerp(H, J, t);
+
+            AnchorPoint mid = new AnchorPoint(K, Quaternion.identity);
+            ControlPoint low = new ControlPoint(mid, H);
+            ControlPoint high = new ControlPoint(mid, J);
+            
+            // rotate mid
+            Vector3 tangent = c.GetTangent(t);
+            mid.SetRotation(Quaternion.AngleAxis(Mathf.LerpAngle(c.start.rotation.eulerAngles.z, c.end.rotation.eulerAngles.z, t), tangent), false);
+            low.Flip();
+
+            points.Add(mid);
+            points.Add(low);
+            points.Add(high);
+            
+            c.controlStart.UpdatePosition(E);
+            c.controlEnd.UpdatePosition(G);
+
+            curves.Remove(c);
+            curves.Add(new BezierCurve(c.start, c.controlStart, low, mid));
+            curves.Add(new BezierCurve(mid, high, c.controlEnd, c.end));
+        }
+
+        // p1 = overlapPoint , p2 = selectedPoint
+        private void CombinePoints(AnchorPoint p1, AnchorPoint p2)
+        {
+            Vector3 p1Forward = p1.rotation * Vector3.forward;
+            Vector3 p2Forward = p2.rotation * Vector3.forward;
+            
+            float dot = Vector3.Dot(p1Forward, p2Forward);
+            bool sameDirection = dot > 0;
+            
+            List<CurvePointData> p1Data = GetCurvesWithPoint(p1);
+            List<CurvePointData> p2Data = GetCurvesWithPoint(p2);
+            
+            ControlPoint p1ControlStart = null;
+            ControlPoint p1ControlEnd = null;
+            for (int i = 0; i < p1Data.Count; i++)
+            {
+                if (p1Data[i].side == BezierCurve.Sides.Start && p1ControlStart == null)
+                    p1ControlStart = p1Data[i].GetControl();
+                else if (p1Data[i].side == BezierCurve.Sides.End && p1ControlEnd == null)
+                    p1ControlEnd = p1Data[i].GetControl();
+            }
+            for (int i = 0; i < p2Data.Count; i++)
+            {
+                p2Data[i].curve.SetAnchor(p1, p2Data[i].side);
+                ControlPoint control = p2Data[i].curve.GetControl(p2Data[i].side);
+                if (!sameDirection) control.flipped = !control.flipped;
+                p2.RemoveControlPoint(control);
+                control.anchorPoint = p1;
+                p1.AddControlPoint(control);
+            }
+
+            points.Remove(p2);
+            for (int i = curves.Count-1; i >= 0; i--)
+            {
+                if (curves[i].IsInvalid())
+                    curves.RemoveAt(i);
+            }
+        }
+
+        private struct CurvePointData
+        {
+            public BezierCurve curve;
+            public BezierCurve.Sides side;
+
+            public CurvePointData(BezierCurve c, BezierCurve.Sides s)
+            {
+                curve = c;
+                side = s;
+            }
+            public ControlPoint GetControl() => side == BezierCurve.Sides.Start ? curve.controlStart : curve.controlEnd;
+            public AnchorPoint GetAnchor() => side == BezierCurve.Sides.Start ? curve.start : curve.end;
+        }
+        private List<CurvePointData> GetCurvesWithPoint(Point p)
+        {
+            List<CurvePointData> ret = new List<CurvePointData>();
+            foreach (var c in curves)
+            {
+                BezierCurve.Sides s = c.HasPoint(p);
+                if (s is BezierCurve.Sides.None)
+                    continue;
+                ret.Add(new CurvePointData(c, s));
+            }
+            return ret;
+        }
+        private int GetCurvesCountWithPoint(Point p)
+        {
+            int ret = 0;
+            foreach (var c in curves)
+            {
+                BezierCurve.Sides s = c.HasPoint(p);
+                if (s is BezierCurve.Sides.None)
+                    continue;
+                ret++;
+            }
+            return ret;
         }
 
         /*
