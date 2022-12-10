@@ -240,21 +240,36 @@ namespace MrWhimble.RailwayMaker
 
                 for (float j = 0f; j <= 1.01f; j += 0.05f)
                 {
-                    //Vector3 lerpUp = Quaternion.Lerp(curves[i].start.rotation,curves[i].end.rotation, j) * Vector3.up;
+                    Vector3 normal = curves[i].GetNormal(j);
+                    Debug.DrawRay(curves[i].GetPosition(j), normal);
+
+                    /*
+                    Quaternion lerpRot = Quaternion.Lerp(curves[i].start.rotation, curves[i].end.rotation, j);
+                    Vector3 lerpRight = lerpRot * Vector3.right;
+                    
                     Vector3 forward = curves[i].GetTangent(j);
-                    Quaternion rot = Quaternion.LookRotation(forward, Vector3.up);
-                    Vector3 up = rot * Vector3.up;
+                    //lerpRight *= Mathf.Sign(Vector3.Dot(forward, lerpRight));
+                    Debug.DrawRay(curves[i].GetPosition(j), lerpRight, Color.blue);
+                    Debug.DrawRay(curves[i].GetPosition(j), forward, Color.green);
+                    Vector3 up;
+                    //if (Vector3.Angle)
+                        up = Vector3.Cross(forward, lerpRight);
+                    Debug.DrawRay(curves[i].GetPosition(j), Vector3.Cross(lerpRight, forward).normalized, Color.red);
+                    up.Normalize();
+                    Quaternion rot = Quaternion.LookRotation(forward, up);
+                    //up = rot * Vector3.up;
                     
                     
                     
                     float angle = Mathf.LerpAngle(curves[i].start.rotation.eulerAngles.z,
                         curves[i].end.rotation.eulerAngles.z, j);
 
-                    up = Quaternion.AngleAxis(angle, forward) * up;
+                    //up = rot * Quaternion.AngleAxis(angle, forward) * up;
                     
                     //Vector3 normal = curves[i].GetTangent(j);
                     Debug.DrawRay(curves[i].GetPosition(j), up);
                     //Debug.DrawRay(curves[i].GetPosition(j), lerpUp, Color.red);
+                    */
                 }
             }
 

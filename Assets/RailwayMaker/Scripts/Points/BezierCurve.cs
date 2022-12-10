@@ -90,15 +90,29 @@ namespace MrWhimble.RailwayMaker
         }
 
         // https://stackoverflow.com/questions/4089443/find-the-tangent-of-a-point-on-a-cubic-bezier-curve
-        public Vector3 GetTangent(float t)
+        public Vector3 GetVelocity(float t)
         {
             float m = 1f - t;
-            return (-3f * m * m * start.position + 
-                    3f * m * m * controlStart.position -
-                    6f * t * m * controlStart.position - 
-                    3f * t * t * controlEnd.position +
-                    6f * t * m * controlEnd.position + 
-                    3f * t * t * end.position).normalized;
+
+            return 3 * m * m * (controlStart.position - start.position) +
+                   6 * m * t * (controlEnd.position - controlStart.position) +
+                   3 * t * t * (end.position - controlEnd.position);
+        }
+
+        public Vector3 GetTangent(float t) => GetVelocity(t).normalized;
+
+        
+        public Vector3 GetNormal(float t)
+        {
+            Vector3 tangent = GetTangent(t);
+            
+            Quaternion lerpRot = Quaternion.Lerp(start.rotation, end.rotation, t);
+            Vector3 binormal = Vector3.Cross(tangent, lerpRot * Vector3.down);
+            binormal.Normalize();
+            
+            Vector3 normal = Vector3.Cross(tangent, binormal);
+
+            return normal;
         }
 
         public Vector3 GetPosition(float t)
