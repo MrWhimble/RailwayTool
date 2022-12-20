@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using MrWhimble.ConstantConsole;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 using Random = UnityEngine.Random;
 
 namespace MrWhimble.RailwayMaker
@@ -17,16 +20,43 @@ namespace MrWhimble.RailwayMaker
 
         private int selectedPoint = -1;
         private Vector3 selectedPointRot;
+        
+        private int closestPoint;
+
+        private int movingPoint = -1;
 
         //private int pointControlIDIndex;
         private List<int> pointControlIDs;
         private int prevHotControl;
 
+        private bool prevMousePressed;
+
+        private int newPointIndex;
+        private bool updateNewCurve;
+        private AnchorPoint oldAnchor;
+        private ControlPoint newControlStart;
+        private ControlPoint newControlEnd;
+        private AnchorPoint newAnchor;
+
+        private CurveDistanceData closestCurve;
+        
+        private bool updateInspector;
+
+        private Tool _prevTool;
+
+        private enum RailTools
+        {
+            MoveAdd,
+            Split,
+            Remove
+        }
+
+        private int railToolsCount;
+
+        private RailTools currentRailTool = RailTools.MoveAdd;
 
         private void OnEnable()
         {
-            Debug.Log("OnEnable");
-
             railPathProp = serializedObject.FindProperty("pathData");
             railPathObj = new SerializedObject(railPathProp.objectReferenceValue);
 
@@ -49,13 +79,39 @@ namespace MrWhimble.RailwayMaker
             {
                 pointControlIDs.Add(-1);
             }
-            
+
+            newPointIndex = -1;
+
+            _prevTool = Tools.current;
+            Tools.current = Tool.Custom;
+
+            currentRailTool = RailTools.MoveAdd;
+            railToolsCount = Enum.GetNames(typeof(RailTools)).Length;
         }
 
         public override void OnInspectorGUI()
         {
             //base.OnInspectorGUI();
 
+            bool updateScene = false;
+            
+            Color originalColor = GUI.backgroundColor;
+            //Color offsetColor = originalColor - new Color(0.1f, 0.1f, 0.1f, 0);
+            Color selectedColor = Color.grey;
+            
+            EditorGUILayout.BeginHorizontal();
+            for (int i = 0; i < railToolsCount; i++)
+            {
+                GUI.backgroundColor = ((int) currentRailTool) == i ? selectedColor : originalColor;
+                if (GUILayout.Button(((RailTools)i).ToString()))
+                {
+                    currentRailTool = (RailTools) i;
+                    updateScene = true;
+                }
+            }
+            GUI.backgroundColor = originalColor;
+            EditorGUILayout.EndHorizontal();
+            
             if (GUILayout.Button("Add New Curve"))
             {
                 AddNewCurve();
@@ -81,7 +137,7 @@ namespace MrWhimble.RailwayMaker
             bool prevBool;
             bool newBool;
 
-            bool updateScene = false;
+            
 
             EditorGUILayout.BeginVertical(GUI.skin.box);
             
@@ -164,16 +220,28 @@ namespace MrWhimble.RailwayMaker
 
         private void OnSceneGUI()
         {
-            Vector3 handlePos;
-            bool updateInspector = false;
+            //Vector3 handlePos;
+            updateInspector = false;
+            closestPoint = -1;
             //pointControlIDIndex = 0;
+
+            //int closestPoint = -1;
+            /*
+            if (movingPoint != -1)
+            {
+                closestPoint = GetClosestAnchor(points[movingPoint].position, RailwayEditorSettings.Instance.AnchorSize/2f, movingPoint);
+            }
+            
             for (int i = 0; i < points.Count; i++)
             {
                 switch (points[i])
                 {
                     case AnchorPoint p:
                     {
-                        Handles.color = Color.blue;
+                        if (closestPoint == i)
+                            Handles.color = RailwayEditorSettings.Instance.AnchorHighlightColor;
+                        else
+                            Handles.color = RailwayEditorSettings.Instance.AnchorColor;
 
                         if (selectedPoint == i)
                         {
@@ -186,8 +254,13 @@ namespace MrWhimble.RailwayMaker
                         else
                         {
                             pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
-                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, p.rotation, 0.5f, Vector3.zero,
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, p.rotation, RailwayEditorSettings.Instance.AnchorSize, Vector3.zero,
                                 Handles.SphereHandleCap);
+                            if (newPointIndex == i)
+                            {
+                                GUIUtility.hotControl = pointControlIDs[i];
+                                newPointIndex = -1;
+                            }
                         }
 
                         if (p.position != handlePos)
@@ -202,7 +275,7 @@ namespace MrWhimble.RailwayMaker
 
                     case ControlPoint p:
                     {
-                        Handles.color = Color.red;
+                        Handles.color = RailwayEditorSettings.Instance.ControlColor;
                         if (selectedPoint == i)
                         {
                             handlePos = Handles.PositionHandle(p.position, Quaternion.identity);
@@ -211,7 +284,7 @@ namespace MrWhimble.RailwayMaker
                         else
                         {
                             pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
-                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, Quaternion.identity, 0.5f, Vector3.zero,
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, Quaternion.identity, RailwayEditorSettings.Instance.ControlSize, Vector3.zero,
                                 Handles.SphereHandleCap);
                         }
 
@@ -227,65 +300,139 @@ namespace MrWhimble.RailwayMaker
                 }
             }
 
-            
-
-            for (int i = 0; i < curves.Count; i++)
+            if (updateNewCurve)
             {
-                Handles.DrawBezier(
-                    curves[i].start.position,
-                    curves[i].end.position,
-                    curves[i].controlStart.position,
-                    curves[i].controlEnd.position,
-                    Color.magenta, null, 2);
-
-                for (float j = 0f; j <= 1.01f; j += 0.05f)
-                {
-                    Vector3 normal = curves[i].GetNormal(j);
-                    Debug.DrawRay(curves[i].GetPosition(j), normal);
-
-                    /*
-                    Quaternion lerpRot = Quaternion.Lerp(curves[i].start.rotation, curves[i].end.rotation, j);
-                    Vector3 lerpRight = lerpRot * Vector3.right;
-                    
-                    Vector3 forward = curves[i].GetTangent(j);
-                    //lerpRight *= Mathf.Sign(Vector3.Dot(forward, lerpRight));
-                    Debug.DrawRay(curves[i].GetPosition(j), lerpRight, Color.blue);
-                    Debug.DrawRay(curves[i].GetPosition(j), forward, Color.green);
-                    Vector3 up;
-                    //if (Vector3.Angle)
-                        up = Vector3.Cross(forward, lerpRight);
-                    Debug.DrawRay(curves[i].GetPosition(j), Vector3.Cross(lerpRight, forward).normalized, Color.red);
-                    up.Normalize();
-                    Quaternion rot = Quaternion.LookRotation(forward, up);
-                    //up = rot * Vector3.up;
-                    
-                    
-                    
-                    float angle = Mathf.LerpAngle(curves[i].start.rotation.eulerAngles.z,
-                        curves[i].end.rotation.eulerAngles.z, j);
-
-                    //up = rot * Quaternion.AngleAxis(angle, forward) * up;
-                    
-                    //Vector3 normal = curves[i].GetTangent(j);
-                    Debug.DrawRay(curves[i].GetPosition(j), up);
-                    //Debug.DrawRay(curves[i].GetPosition(j), lerpUp, Color.red);
-                    */
-                }
+                Vector3 originForward = oldAnchor.rotation * Vector3.forward;
+                Vector3 dir = (newAnchor.position - oldAnchor.position).normalized;
+                float dot = Vector3.Dot(originForward, dir);
+                bool sameDirection = dot > 0;
+                newControlStart.flipped = !sameDirection;
+                newControlEnd.flipped = sameDirection;
+                newControlStart.UpdatePosition();
+                newControlEnd.UpdatePosition();
             }
 
+            float normalDelta = 1f / ((float)RailwayEditorSettings.Instance.RailNormalCount);
+            for (int i = 0; i < curves.Count; i++)
+            {
+                BezierCurve c = curves[i];
+                
+                if (RailwayEditorSettings.Instance.ControlLineShow)
+                {
+                    Handles.color = RailwayEditorSettings.Instance.ControlLineColor;
+                    Handles.DrawLine(c.start.position, c.controlStart.position, RailwayEditorSettings.Instance.ControlLineThickness);
+                    Handles.DrawLine(c.end.position, c.controlEnd.position, RailwayEditorSettings.Instance.ControlLineThickness);
+                }
+
+                if (RailwayEditorSettings.Instance.InterControlLineShow)
+                {
+                    Handles.color = RailwayEditorSettings.Instance.InterControlLineColor;
+                    Handles.DrawLine(c.controlStart.position, c.controlEnd.position, RailwayEditorSettings.Instance.InterControlLineThickness);
+                }
+
+                Handles.DrawBezier(
+                    c.start.position,
+                    c.end.position,
+                    c.controlStart.position,
+                    c.controlEnd.position,
+                    RailwayEditorSettings.Instance.RailLineColor, null, RailwayEditorSettings.Instance.RailLineThickness);
+
+                if (RailwayEditorSettings.Instance.RailNormalShow)
+                {
+                    Handles.color = RailwayEditorSettings.Instance.RailNormalColor;
+                    for (float j = 0f; j <= 1.00001f; j += normalDelta)
+                    {
+                        Vector3 normal = c.GetNormal(j);
+                        Vector3 pointPos = c.GetPosition(j);
+
+                        Handles.DrawLine(pointPos, pointPos + RailwayEditorSettings.Instance.RailNormalLength * normal,
+                            RailwayEditorSettings.Instance.RailNormalThickness);
+                    }
+                }
+            }
+            */
+
+            switch (currentRailTool)
+            {
+                case RailTools.MoveAdd:
+                {
+                    MoveAddTool_Draw();
+                    MoveAddTool_HandleInput();
+                    break;
+                }
+                case RailTools.Split:
+                {
+                    SplitTool_Draw();
+                    SplitTool_HandleInput();
+                    break;
+                }
+                case RailTools.Remove:
+                {
+                    RemoveTool_Draw();
+                    RemoveTool_HandleInput();
+                    break;
+                }
+            }
             
-            if (prevHotControl != GUIUtility.hotControl && Event.current.shift && Event.current.button == 0)
+            
+
+            /*
+            if (prevHotControl != GUIUtility.hotControl && Event.current.button == 0)
             {
                 if (GUIUtility.hotControl != 0)
                 {
-                    selectedPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
-                    if (selectedPoint != -1 && points[selectedPoint].GetType() == typeof(AnchorPoint))
-                        selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
-                    prevHotControl = GUIUtility.hotControl;
+                    if (Event.current.shift)
+                    {
+                        
+                        selectedPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                        if (selectedPoint != -1 && points[selectedPoint].GetType() == typeof(AnchorPoint)) 
+                            selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
+                        //prevHotControl = GUIUtility.hotControl;
 
-                    updateInspector = true;
+                        updateInspector = true;
+                    }
+
+                    if (Event.current.control && prevHotControl == 0)
+                    {
+                        
+                        int point = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                        if (point != -1 && points[point].GetType() == typeof(AnchorPoint)) 
+                            AddCurveConnectedTo(point);
+                        //prevHotControl = GUIUtility.hotControl;
+                        
+                        updateInspector = true;
+
+                        
+                    }
+                }
+                else
+                {
+                    if (updateNewCurve)
+                    {
+                        oldAnchor = null;
+                        newControlStart = null;
+                        newControlEnd = null;
+                        newAnchor = null;
+                        updateNewCurve = false;
+                    }
                 }
             }
+            */
+
+            //if (movingPoint != -1 && closestPoint != -1 && GUIUtility.hotControl == 0)
+            //{
+            //    CombinePoints((AnchorPoint)points[closestPoint], (AnchorPoint)points[movingPoint]);
+            //}
+            
+            //if (GUIUtility.hotControl != 0)
+            //    movingPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+            //else
+            //    movingPoint = -1;
+
+
+            
+            
+            prevHotControl = GUIUtility.hotControl;
             
             
             if (updateInspector)
@@ -294,10 +441,326 @@ namespace MrWhimble.RailwayMaker
             }
         }
 
+        private void MoveAddTool_Draw()
+        {
+            Vector3 handlePos;
+            bool updateInspector = false;
+            
+            
+            if (movingPoint != -1)
+            {
+                closestPoint = GetClosestAnchor(points[movingPoint].position, RailwayEditorSettings.Instance.AnchorSize/2f, movingPoint);
+            }
+            
+            for (int i = 0; i < points.Count; i++)
+            {
+                switch (points[i])
+                {
+                    case AnchorPoint p:
+                    {
+                        Handles.color = closestPoint == i ? 
+                            RailwayEditorSettings.Instance.AnchorHighlightColor : 
+                            RailwayEditorSettings.Instance.AnchorColor;
+                        
+                        if (selectedPoint == i)
+                        {
+                            handlePos = Handles.PositionHandle(p.position, Tools.pivotRotation == PivotRotation.Local ? p.rotation : Quaternion.identity);
+                            pointControlIDs[i] = -1;
+                        }
+                        else
+                        {
+                            pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, p.rotation, RailwayEditorSettings.Instance.AnchorSize, Vector3.zero,
+                                Handles.SphereHandleCap);
+                            if (newPointIndex == i)
+                            {
+                                GUIUtility.hotControl = pointControlIDs[i];
+                                newPointIndex = -1;
+                            }
+                        }
+
+                        if (p.position != handlePos)
+                        {
+                            p.UpdatePosition(handlePos);
+                            selectedPointRot = p.rotation.eulerAngles;
+                            updateInspector = true;
+                        }
+                        break;
+                    }
+                    case ControlPoint p:
+                    {
+                        Handles.color = RailwayEditorSettings.Instance.ControlColor;
+                        if (selectedPoint == i)
+                        {
+                            handlePos = Handles.PositionHandle(p.position, Quaternion.identity);
+                            pointControlIDs[i] = -1;
+                        }
+                        else
+                        {
+                            pointControlIDs[i] = GUIUtility.GetControlID(i, FocusType.Passive);
+                            handlePos = Handles.FreeMoveHandle(pointControlIDs[i], p.position, Quaternion.identity, RailwayEditorSettings.Instance.ControlSize, Vector3.zero,
+                                Handles.SphereHandleCap);
+                        }
+
+                        if (p.position != handlePos)
+                        {
+                            p.UpdatePosition(handlePos);
+                            selectedPointRot = p.anchorPoint.rotation.eulerAngles;
+                            updateInspector = true;
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            if (updateNewCurve)
+            {
+                Vector3 originForward = oldAnchor.rotation * Vector3.forward;
+                Vector3 dir = (newAnchor.position - oldAnchor.position).normalized;
+                float dot = Vector3.Dot(originForward, dir);
+                bool sameDirection = dot > 0;
+                newControlStart.flipped = !sameDirection;
+                newControlEnd.flipped = sameDirection;
+                newControlStart.UpdatePosition();
+                newControlEnd.UpdatePosition();
+            }
+
+            float normalDelta = 1f / ((float)RailwayEditorSettings.Instance.RailNormalCount);
+            for (int i = 0; i < curves.Count; i++)
+            {
+                BezierCurve c = curves[i];
+                
+                if (RailwayEditorSettings.Instance.ControlLineShow)
+                {
+                    Handles.color = RailwayEditorSettings.Instance.ControlLineColor;
+                    Handles.DrawLine(c.start.position, c.controlStart.position, RailwayEditorSettings.Instance.ControlLineThickness);
+                    Handles.DrawLine(c.end.position, c.controlEnd.position, RailwayEditorSettings.Instance.ControlLineThickness);
+                }
+
+                if (RailwayEditorSettings.Instance.InterControlLineShow)
+                {
+                    Handles.color = RailwayEditorSettings.Instance.InterControlLineColor;
+                    Handles.DrawLine(c.controlStart.position, c.controlEnd.position, RailwayEditorSettings.Instance.InterControlLineThickness);
+                }
+
+                Handles.DrawBezier(
+                    c.start.position,
+                    c.end.position,
+                    c.controlStart.position,
+                    c.controlEnd.position,
+                    RailwayEditorSettings.Instance.RailLineColor, null, RailwayEditorSettings.Instance.RailLineThickness);
+
+                if (!RailwayEditorSettings.Instance.RailNormalShow) 
+                    continue;
+                
+                Handles.color = RailwayEditorSettings.Instance.RailNormalColor;
+                for (float j = 0f; j <= 1.00001f; j += normalDelta)
+                {
+                    Vector3 normal = c.GetNormal(j);
+                    Vector3 pointPos = c.GetPosition(j);
+
+                    Handles.DrawLine(pointPos, pointPos + RailwayEditorSettings.Instance.RailNormalLength * normal,
+                        RailwayEditorSettings.Instance.RailNormalThickness);
+                }
+            }
+            
+            if (movingPoint != -1 && closestPoint != -1 && GUIUtility.hotControl == 0)
+            {
+                CombinePoints((AnchorPoint)points[closestPoint], (AnchorPoint)points[movingPoint]);
+            }
+        }
+        private void MoveAddTool_HandleInput()
+        {
+            if (prevHotControl != GUIUtility.hotControl && Event.current.button == 0)
+            {
+                if (GUIUtility.hotControl != 0)
+                {
+                    if (Event.current.shift)
+                    {
+                        
+                        selectedPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                        if (selectedPoint != -1 && points[selectedPoint].GetType() == typeof(AnchorPoint)) 
+                            selectedPointRot = ((AnchorPoint) points[selectedPoint]).rotation.eulerAngles;
+                        //prevHotControl = GUIUtility.hotControl;
+
+                        updateInspector = true;
+                    }
+
+                    if (Event.current.control && prevHotControl == 0)
+                    {
+                        
+                        int point = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                        if (point != -1 && points[point].GetType() == typeof(AnchorPoint)) 
+                            AddCurveConnectedTo(point);
+                        //prevHotControl = GUIUtility.hotControl;
+                        
+                        updateInspector = true;
+
+                        
+                    }
+                }
+                else
+                {
+                    if (updateNewCurve)
+                    {
+                        oldAnchor = null;
+                        newControlStart = null;
+                        newControlEnd = null;
+                        newAnchor = null;
+                        updateNewCurve = false;
+                    }
+                }
+            }
+
+            if (GUIUtility.hotControl != 0)
+            {
+                movingPoint = pointControlIDs.IndexOf(GUIUtility.hotControl);
+                if (movingPoint != -1 && points[movingPoint] is ControlPoint)
+                    movingPoint = -1;
+            }
+            else
+                movingPoint = -1;
+        }
+
+        private void SplitTool_Draw()
+        {
+            if (Event.current.type == EventType.Repaint){
+                Handles.color = RailwayEditorSettings.Instance.AnchorColor;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    switch (points[i])
+                    {
+                        case ControlPoint:
+                            break;
+                        case AnchorPoint p:
+                        {
+                            Handles.FreeMoveHandle(p.position, Quaternion.identity,
+                                RailwayEditorSettings.Instance.AnchorSize, Vector3.zero, Handles.SphereHandleCap);
+                            break;
+                        }
+                    }
+                }
+    
+                float normalDelta = 1f / ((float)RailwayEditorSettings.Instance.RailNormalCount);
+                for (int i = 0; i < curves.Count; i++)
+                {
+                    BezierCurve c = curves[i];
+                    
+                    Handles.DrawBezier(
+                        c.start.position, 
+                        c.end.position, 
+                        c.controlStart.position, 
+                        c.controlEnd.position, 
+                        RailwayEditorSettings.Instance.RailLineColor, 
+                        null, 
+                        RailwayEditorSettings.Instance.RailLineThickness);
+    
+                    if (!RailwayEditorSettings.Instance.RailNormalShow)
+                        continue;
+    
+                    Handles.color = RailwayEditorSettings.Instance.RailNormalColor;
+                    for (float j = 0f; j <= 1.00001f; j += normalDelta)
+                    {
+                        Vector3 normal = c.GetNormal(j);
+                        Vector3 pointPos = c.GetPosition(j);
+    
+                        Handles.DrawLine(pointPos, pointPos + RailwayEditorSettings.Instance.RailNormalLength * normal,
+                            RailwayEditorSettings.Instance.RailNormalThickness);
+                    }
+                }
+                 
+                closestCurve = GetClosestCurve(Event.current.mousePosition);
+                if (closestCurve.curve != null)
+                {
+                    Vector3 pos = closestCurve.curve.GetPosition(closestCurve.t);
+                    Handles.color = RailwayEditorSettings.Instance.SplitLineColor;
+                    Handles.DrawLine(closestCurve.rayPoint, pos);
+                    //Handles.FreeMoveHandle(pos, Quaternion.identity, 0.125f, Vector3.zero, Handles.SphereHandleCap);
+                    //Gizmos.DrawSphere(pos, 0.125f);
+                }
+                
+                SceneView.RepaintAll();
+            }
+        }
+        private void SplitTool_HandleInput()
+        {
+            if (prevHotControl != GUIUtility.hotControl && Event.current.button == 0)
+            {
+                if (Event.current.shift && Event.current.rawType == EventType.MouseDown)
+                {
+                    if (closestCurve.curve != null)
+                    {
+                        SplitCurve(closestCurve.curve, closestCurve.t);
+                    }
+                }
+                
+            }
+        }
+
+        private void RemoveTool_Draw()
+        {
+            
+        }
+        private void RemoveTool_HandleInput()
+        {
+            
+        }
+        
+        
+        
+        
+        
+        private int GetClosestAnchor(Vector3 pos, float minDistance = Mathf.Infinity, int ignoreIndex = -1)
+        {
+            float closestDist = Mathf.Infinity;
+            int closestIndex = -1;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (i == ignoreIndex)
+                    continue;
+                switch (points[i])
+                {
+                    case ControlPoint:
+                        break;
+                    case AnchorPoint ap:
+                    {
+                        float dist = Vector3.Distance(ap.position, pos);
+                        if (dist > minDistance)
+                            break;
+                        if (dist < closestDist)
+                        {
+                            closestDist = dist;
+                            closestIndex = i;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return closestIndex;
+        }
+
+        private void AddCurveConnectedTo(int pointIndex)
+        {
+            oldAnchor = (AnchorPoint)points[pointIndex];
+            newAnchor = new AnchorPoint(oldAnchor.position, oldAnchor.rotation);
+            newControlStart = new ControlPoint(oldAnchor, 1, true);
+            newControlEnd = new ControlPoint(newAnchor, 1, false);
+            newPointIndex = points.Count;
+            //selectedPoint = newPointIndex;
+            points.Add(newAnchor);
+            points.Add(newControlStart);
+            points.Add(newControlEnd);
+            curves.Add(new BezierCurve(oldAnchor, newControlStart, newControlEnd, newAnchor));
+            pointControlIDs.Add(-1);
+            pointControlIDs.Add(-1);
+            pointControlIDs.Add(-1);
+            updateNewCurve = true;
+            //GUIUtility.hotControl = -1;
+        }
+
         private void OnDisable()
         {
-            Debug.Log("OnDisable");
-
             railPathObj.Update();
 
             //SerializedProperty railPathPointsProp = railPathProp.FindPropertyRelative("pathPoints");
@@ -384,6 +847,8 @@ namespace MrWhimble.RailwayMaker
             }
 
             railPathObj.ApplyModifiedProperties();
+
+            Tools.current = _prevTool;
         }
 
         private void CustomSphereCapFunction(int controlID, Vector3 pos, Quaternion rot, float size, EventType eventType)
@@ -451,6 +916,7 @@ namespace MrWhimble.RailwayMaker
 
         private void SplitCurve(BezierCurve c, float t)
         {
+            Debug.Log("SplitCurve");
             Vector3 E = Vector3.Lerp(c.start.position, c.controlStart.position, t);
             Vector3 F = Vector3.Lerp(c.controlStart.position, c.controlEnd.position, t);
             Vector3 G = Vector3.Lerp(c.controlEnd.position, c.end.position, t);
@@ -465,13 +931,17 @@ namespace MrWhimble.RailwayMaker
             ControlPoint high = new ControlPoint(mid, J);
             
             // rotate mid
-            Vector3 tangent = c.GetTangent(t);
-            mid.SetRotation(Quaternion.AngleAxis(Mathf.LerpAngle(c.start.rotation.eulerAngles.z, c.end.rotation.eulerAngles.z, t), tangent), false);
+            //Vector3 tangent = c.GetTangent(t);
+            //mid.SetRotation(Quaternion.AngleAxis(Mathf.LerpAngle(c.start.rotation.eulerAngles.z, c.end.rotation.eulerAngles.z, t), tangent), false);
+            mid.SetRotation(Quaternion.LookRotation(c.GetTangent(t), c.GetNormal(t)), false);
             low.Flip();
 
             points.Add(mid);
             points.Add(low);
             points.Add(high);
+            pointControlIDs.Add(-1);
+            pointControlIDs.Add(-1);
+            pointControlIDs.Add(-1);
             
             c.controlStart.UpdatePosition(E);
             c.controlEnd.UpdatePosition(G);
@@ -490,34 +960,80 @@ namespace MrWhimble.RailwayMaker
             float dot = Vector3.Dot(p1Forward, p2Forward);
             bool sameDirection = dot > 0;
             
-            List<CurvePointData> p1Data = GetCurvesWithPoint(p1);
             List<CurvePointData> p2Data = GetCurvesWithPoint(p2);
             
-            ControlPoint p1ControlStart = null;
-            ControlPoint p1ControlEnd = null;
-            for (int i = 0; i < p1Data.Count; i++)
-            {
-                if (p1Data[i].side == BezierCurve.Sides.Start && p1ControlStart == null)
-                    p1ControlStart = p1Data[i].GetControl();
-                else if (p1Data[i].side == BezierCurve.Sides.End && p1ControlEnd == null)
-                    p1ControlEnd = p1Data[i].GetControl();
-            }
+            bool checkP1 = false;
             for (int i = 0; i < p2Data.Count; i++)
             {
-                p2Data[i].curve.SetAnchor(p1, p2Data[i].side);
-                ControlPoint control = p2Data[i].curve.GetControl(p2Data[i].side);
-                if (!sameDirection) control.flipped = !control.flipped;
-                p2.RemoveControlPoint(control);
-                control.anchorPoint = p1;
+                
+                BezierCurve.Sides side = p2Data[i].side; // the side the selected point is on the curve
+                BezierCurve curve = p2Data[i].curve; // the curve the selected point is part of
+                curve.SetAnchor(p1, side);
+                if (curve.IsInvalid())
+                {
+                    // remove curve
+                    curve.controlStart.anchorPoint.RemoveControlPoint(curve.controlStart);
+                    points.Remove(curve.controlStart);
+                    pointControlIDs.RemoveAt(0);
+                    curve.controlEnd.anchorPoint.RemoveControlPoint(curve.controlEnd);
+                    points.Remove(curve.controlEnd);
+                    pointControlIDs.RemoveAt(0);
+                    if (GetCurvesCountWithPoint(p1) <= 1)
+                    {
+                        checkP1 = true;
+                    }
+                    curves.Remove(curve);
+                    continue;
+                }
+                ControlPoint control = curve.GetControl(side);
                 p1.AddControlPoint(control);
+                if (!sameDirection) control.Flip();
             }
 
             points.Remove(p2);
+            pointControlIDs.RemoveAt(0);
+
+            p1.UpdateControls();
+            
+            if (checkP1)
+            {
+                List<CurvePointData> data = GetCurvesWithPoint(p1);
+                if (data.Count <= 1)
+                {
+                    if (data.Count == 1 && data[0].curve.IsInvalid())
+                    {
+                        curves.Remove(data[0].curve);
+                        points.Remove(p1);
+                        pointControlIDs.RemoveAt(0);
+                    }
+                }
+            }
+            
+            
+            
+            
+            /*
             for (int i = curves.Count-1; i >= 0; i--)
             {
                 if (curves[i].IsInvalid())
+                {
+                    points.Remove(curves[i].controlStart);
+                    points.Remove(curves[i].controlEnd);
+                    pointControlIDs.RemoveAt(0);
+                    pointControlIDs.RemoveAt(0);
                     curves.RemoveAt(i);
+                }
             }
+            
+            p1.UpdateControls();
+
+            if (GetCurvesCountWithPoint(p1) == 0)
+            {
+                points.Remove(p1);
+                pointControlIDs.RemoveAt(0);
+            }
+
+            */
         }
 
         private struct CurvePointData
@@ -556,6 +1072,89 @@ namespace MrWhimble.RailwayMaker
                 ret++;
             }
             return ret;
+        }
+
+        private struct CurveDistanceData
+        {
+            public BezierCurve curve;
+            public float distance;
+            public float t;
+            public Vector3 rayPoint;
+
+            public CurveDistanceData(BezierCurve c, float d, float t, Vector3 rp)
+            {
+                curve = c;
+                distance = d;
+                this.t = t;
+                rayPoint = rp;
+            }
+        }
+
+        private CurveDistanceData GetClosestCurve(Vector2 screenPos)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(screenPos);
+            float originalDelta = 1f / (float)RailwayEditorSettings.Instance.SplitDistantSearchCount;
+            BezierCurve bestCurve = null;
+            float bestT = 0;
+            float bestDist = Mathf.Infinity;
+            Vector3 bestRayPoint = Vector3.zero;
+            foreach (var c in curves)
+            {
+                float delta = originalDelta;
+                float cBestT = 0;
+                float cBestDist = Mathf.Infinity;
+                Vector3 cBestRayPoint = Vector3.zero;
+                for (float t = 0f; t <= 1f; t+=delta)
+                {
+                    Vector3 cPos = c.GetPosition(t);
+                    Vector3 rPos = GetClosestPointOnRay(ray, cPos);
+                    float dist = (cPos - rPos).magnitude;
+                    if (dist < cBestDist)
+                    {
+                        cBestDist = dist;
+                        cBestT = t;
+                        cBestRayPoint = rPos;
+                    }
+                }
+
+                cBestT -= delta * 0.5f;
+                float oldBest = delta;
+                delta *= delta;
+                cBestT = Mathf.Clamp01(cBestT);
+                
+                cBestDist = Mathf.Infinity;
+                for (float t = cBestT; t <= cBestT+oldBest; t += delta)
+                {
+                    if (t > 1)
+                        break;
+                    Vector3 cPos = c.GetPosition(t);
+                    Vector3 rPos = GetClosestPointOnRay(ray, cPos);
+                    float dist = (cPos - rPos).magnitude;
+                    if (dist < cBestDist)
+                    {
+                        cBestDist = dist;
+                        cBestT = t;
+                        cBestRayPoint = rPos;
+                    }
+                }
+                
+                cBestT = Mathf.Clamp01(cBestT);
+
+                if (cBestDist < bestDist)
+                {
+                    bestCurve = c;
+                    bestDist = cBestDist;
+                    bestT = cBestT;
+                    bestRayPoint = cBestRayPoint;
+                }
+            }
+
+            return new CurveDistanceData(bestCurve, bestDist, bestT, bestRayPoint);
+        }
+
+        private Vector3 GetClosestPointOnRay(Ray r, Vector3 p)
+        {
+            return r.origin + Vector3.Project(p - r.origin, r.direction);
         }
 
         /*

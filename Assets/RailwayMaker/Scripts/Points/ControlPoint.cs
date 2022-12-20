@@ -21,6 +21,13 @@ namespace MrWhimble.RailwayMaker
             p.AddControlPoint(this);
             
         }
+        public ControlPoint(AnchorPoint p, float dist, bool f)
+        {
+            p.AddControlPoint(this);
+            distance = dist;
+            flipped = f;
+            UpdatePosition();
+        }
 
         public void SetAnchorPoint(AnchorPoint p)
         {

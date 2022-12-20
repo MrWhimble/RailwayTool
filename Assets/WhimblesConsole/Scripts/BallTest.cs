@@ -10,6 +10,7 @@ namespace MrWhimble.ConstantConsole
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
+            //ConstantDebug.Log("Hello");
         }
 
         private void Update()

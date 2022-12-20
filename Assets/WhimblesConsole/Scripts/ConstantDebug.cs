@@ -9,20 +9,23 @@ namespace MrWhimble.ConstantConsole
 {
     public static class ConstantDebug
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         public static Dictionary<string, List<int>> headers;
         public static Dictionary<int, ConstantDebugData> data;
         public static bool hasUpdated;
-        #endif // UNITY_EDITOR
 
-        #if UNITY_EDITOR
+        private static string filePrefix = " (at ";
+        //private static string filePrefix = "] in ";
+#endif // UNITY_EDITOR
+
+#if UNITY_EDITOR
         public static void Clear()
         {
             data = new Dictionary<int, ConstantDebugData>();
             headers = new Dictionary<string, List<int>>();
             Debug.Log("(ConstantDebug) Cleared Constants");
         }
-        #endif // UNITY_EDITOR
+#endif // UNITY_EDITOR
 
         /// <summary>
         /// Log message to Constant Console
@@ -38,6 +41,8 @@ namespace MrWhimble.ConstantConsole
 
             // Get stack trace for ID, file and line number
             string stackTrace = StackTraceUtility.ExtractStackTrace().Split('\n')[2];
+            //string stackTrace = Environment.StackTrace.Split('\n')[2];
+            //Debug.Log(stackTrace);
             
             // use hash of stack trace and context for ID
             int id = GetID(stackTrace, ctx);
@@ -58,7 +63,7 @@ namespace MrWhimble.ConstantConsole
                     go = mb.gameObject;
 
                 // Get script asset and line number of log
-                int startIndex = stackTrace.IndexOf(" (at ") + 5;
+                int startIndex = stackTrace.IndexOf(filePrefix) + filePrefix.Length;
                 string pathAndLineString = stackTrace.Substring(startIndex, stackTrace.Length - startIndex - 1);
                 string[] pathAndLine = pathAndLineString.Split(':');
                 UnityEngine.Object asset = AssetDatabase.LoadMainAssetAtPath(pathAndLine[0]);

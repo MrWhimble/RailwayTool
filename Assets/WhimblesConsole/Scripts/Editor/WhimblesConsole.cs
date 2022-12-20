@@ -9,6 +9,10 @@ namespace MrWhimble.ConstantConsole
     public class WhimblesConsole : EditorWindow
     {
         private Vector2 scrollPos;
+
+        private Color originalColor;
+        private Color offsetColor;
+        private Color selectedColor;
         
         [MenuItem("Tools/MrWhimble/ConstantConsole")]
         private static void ShowWindow()
@@ -32,17 +36,17 @@ namespace MrWhimble.ConstantConsole
             
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height-20f));
             
-            Color originalColor = GUI.backgroundColor;
-            Color offsetColor = originalColor - new Color(0.1f, 0.1f, 0.1f, 0);
-            Color selectedColor = Color.grey;
-
             GUIStyle style = new GUIStyle(GUI.skin.window);
             style.wordWrap = true;
             style.stretchHeight = false;
             style.padding = new RectOffset(3, 3, 3, 3);
 
+            originalColor = GUI.backgroundColor;
+            offsetColor = originalColor - new Color(0.1f, 0.1f, 0.1f, 0);
+            selectedColor = Color.grey;
+
             int index = 0;
-            
+            DateTime timeNow = DateTime.Now;
             foreach (KeyValuePair<string, List<int>> kv in ConstantDebug.headers)
             {
                 EditorGUILayout.BeginVertical(GUI.skin.box);
@@ -59,7 +63,7 @@ namespace MrWhimble.ConstantConsole
 
                     EditorGUILayout.BeginHorizontal();
 
-                    TimeSpan timeSince = DateTime.Now.Subtract(d.lastUpdateTime);
+                    TimeSpan timeSince = timeNow.Subtract(d.lastUpdateTime);
                     string timeLabel = $"[{d.lastUpdateTime.Hour:00}:{d.lastUpdateTime.Minute:00}:{d.lastUpdateTime.Second:00}]";
                     if (timeSince.TotalSeconds >= 0.25f)
                         timeLabel += $" (T-{timeSince.TotalSeconds:0.00})";
