@@ -14,23 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathPoints:
   - pointType: 0
-    position: {x: 0, y: 0, z: 0}
-    rotation: {x: 0, y: 0.38268346, z: 0, w: 0.92387956}
+    position: {x: 0, y: 0, z: 10}
+    rotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
     flipped: 0
     connectedPoints: 01000000
   - pointType: 1
-    position: {x: 1, y: 0, z: 1}
-    rotation: {x: 0, y: 0.38268346, z: 0, w: 0.92387956}
+    position: {x: -75, y: 0, z: 10}
+    rotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
     flipped: 0
     connectedPoints: 00000000
   - pointType: 1
-    position: {x: 3, y: 0, z: -1}
-    rotation: {x: 0, y: 0.38268346, z: 0, w: 0.92387956}
+    position: {x: -75, y: 0, z: 0}
+    rotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
     flipped: 1
     connectedPoints: 03000000
   - pointType: 0
-    position: {x: 4, y: 0, z: 0}
-    rotation: {x: 0, y: 0.38268346, z: 0, w: 0.92387956}
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
     flipped: 1
     connectedPoints: 02000000
   pathCurves:

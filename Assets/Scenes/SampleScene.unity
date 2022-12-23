@@ -311,6 +311,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1474970949}
   - component: {fileID: 1474970948}
+  - component: {fileID: 1474970950}
+  - component: {fileID: 1474970951}
   m_Layer: 0
   m_Name: RailwayManager
   m_TagString: Untagged
@@ -330,7 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a66d160a59782c04881f15cc3e832d9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathData: {fileID: 11400000, guid: 489564751d8f3de4aa40ca8133525396, type: 2}
+  pathData: {fileID: 11400000, guid: 6104e47f7015825418187d4df3968524, type: 2}
 --- !u!4 &1474970949
 Transform:
   m_ObjectHideFlags: 0
@@ -346,3 +348,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1474970950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474970947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf49edf1574743d8999f12759a6c06dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  curveSegments: 20
+  trackSeperation: 1
+  trackHeight: 0.2
+  trackWidth: 0.1
+--- !u!114 &1474970951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474970947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd037bc632104e77add3407da282c433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

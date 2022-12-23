@@ -10,5 +10,6 @@ namespace MrWhimble.RailwayMaker
         //[SerializeReference] public RailwayNetwork railwayNetwork;
 
         [SerializeField] private RailPathData pathData;
+        public RailPathData PathData => pathData;
     }
 }

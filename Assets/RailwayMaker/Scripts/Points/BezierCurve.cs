@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using MrWhimble.ConstantConsole;
+using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
@@ -23,12 +24,20 @@ namespace MrWhimble.RailwayMaker
         public ControlPoint controlStart;
         public ControlPoint controlEnd;
 
+        private bool lengthCached = false;
+        private float length;
+        public float Length => length;
+
+        public float[] distanceTimeList;
+        public Vector3[] distancePosList;
+
         public BezierCurve(AnchorPoint a, ControlPoint b, ControlPoint c, AnchorPoint d)
         {
             start = a;
             end = d;
             controlStart = b;
             controlEnd = c;
+            lengthCached = false;
         }
 
         public Sides HasPoint(Point p)
@@ -132,31 +141,142 @@ namespace MrWhimble.RailwayMaker
                 return true;
             return false;
         }
-        /*
-        public ControlPoint GetControl(PointTypes t)
+
+        public void CalculateLength()
         {
-            if (t is PointTypes.Start or PointTypes.End) return null;
-            return (ControlPoint) this[t];
+            //length = ArcLength(start.position, controlStart.position, controlEnd.position, end.position, 20);
+            //lengthCached = true;
+
+            float tDelta = 0.0001f;
+            Vector3 prevPos = GetPosition(0f);
+            float travelled = 0;
+            for (float t = tDelta; t <= 1f; t+= tDelta)
+            {
+                Vector3 pos = GetPosition(t);
+                travelled += (pos - prevPos).magnitude;
+                prevPos = pos;
+            }
+
+            length = travelled;
+            lengthCached = true;
         }
-        public AnchorPoint GetAnchor(PointTypes t)
+
+        // https://stackoverflow.com/questions/29438398/cheap-way-of-calculating-cubic-bezier-length
+        private float ArcLength(Vector3 A, Vector3 B, Vector3 C, Vector3 D, int subDiv)
         {
-            if (t is PointTypes.ControlStart or PointTypes.ControlEnd) return null;
-            return (AnchorPoint) this[t];
+            if (subDiv > 0)
+            {
+                Vector3 a = A + ((B - A) * 0.5f);
+                Vector3 b = A + ((B - A) * 0.5f);
+                Vector3 c = A + ((B - A) * 0.5f);
+                Vector3 d = A + ((B - A) * 0.5f);
+                Vector3 e = A + ((B - A) * 0.5f);
+                Vector3 f = A + ((B - A) * 0.5f);
+
+                float value = 0f;
+                value += ArcLength(A, a, d, f, subDiv - 1);
+                value += ArcLength(f, e, c, D, subDiv - 1);
+                return value;
+            }
+            else
+            {
+                float controlNetLength = (B - A).magnitude + (C - B).magnitude + (D - C).magnitude;
+                float chordLength = (D - A).magnitude;
+                return (chordLength + controlNetLength) * 0.5f;
+            }
+        }
+
+        public void InitDistancePosList(int segments)
+        {
+            if (!lengthCached)
+                CalculateLength();
+
+            if (segments < 2)
+                segments = 2;
+
+            distancePosList = new Vector3[segments + 1];
+
+            float tDelta = 0.001f;
+            float stepDelta = length / segments;
+            Vector3 prevPos = GetPosition(0f);
+            float travelled = 0f;
+            float nextStep = 0f;
+            int index = 0;
+            for (float t = 0f; t <= 1f; t+=tDelta)
+            {
+                Vector3 pos = GetPosition(t);
+                float dist = (prevPos - pos).magnitude;
+                if (travelled + dist >= nextStep-0.0001f)
+                {
+                    float p = (nextStep - travelled) / dist;
+                    distancePosList[index] = GetPosition(t + tDelta * p);
+                    index++;
+                    if (index == distancePosList.Length)
+                        break;
+                    nextStep += stepDelta;
+                }
+                travelled += dist;
+                prevPos = pos;
+            }
+
+            foreach (var v in distancePosList)
+            {
+                Debug.DrawRay(v, Vector3.up, Color.yellow, 20f);
+            }
+        }
+
+        public Vector3 GetPosFromDistance(float distance)
+        {
+            float dist = (distance / length) * (distancePosList.Length -1 );
+            int index = Mathf.FloorToInt(dist);
+            float t = dist % 1f;
+            return Vector3.Lerp(distancePosList[index], distancePosList[index + 1], t);
         }
         
-        private Point this[PointTypes t]
+        public void InitDistanceTimeList(int segments)
         {
-            get
+            if (!lengthCached)
+                CalculateLength();
+
+            
+
+            if (segments < 2)
+                segments = 2;
+
+            distanceTimeList = new float[segments + 1];
+
+            float tDelta = 0.001f;
+            float stepDelta = length / (segments-1);
+            Vector3 prevPos = GetPosition(0f);
+            float travelled = 0f;
+            float nextStep = 0f;
+            int index = 1;
+            distanceTimeList[0] = 0f;
+            distanceTimeList[^1] = 1f;
+            for (float t = tDelta; t <= 1f; t+=tDelta)
             {
-                switch (t)
+                Vector3 pos = GetPosition(t);
+                float dist = (prevPos - pos).magnitude;
+                if (travelled + dist >= nextStep)//-0.0001f)
                 {
-                    case PointTypes.Start: return start;
-                    case PointTypes.ControlStart: return controlStart;
-                    case PointTypes.ControlEnd: return controlEnd;
-                    case PointTypes.End: return end;
-                    default: return null;
+                    float p = (nextStep - travelled) / dist;
+                    distanceTimeList[index] = t + tDelta * p;
+                    index++;
+                    if (index == distanceTimeList.Length-1)
+                        break;
+                    nextStep += stepDelta;
                 }
+                travelled += dist;
+                prevPos = pos;
             }
-        }*/
+        }
+
+        public float GetTFromDistance(float distance)
+        {
+            float dist = (distance / length) * (distanceTimeList.Length -1 );
+            int index = Mathf.FloorToInt(dist);
+            float t = dist % 1f;
+            return Mathf.Lerp(distanceTimeList[index], distanceTimeList[index + 1], t);
+        }
     }
 }

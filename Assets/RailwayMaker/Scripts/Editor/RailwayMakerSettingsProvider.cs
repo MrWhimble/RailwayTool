@@ -165,7 +165,7 @@ namespace MrWhimble.RailwayMaker
             */
             if (EditorGUI.EndChangeCheck())
             {
-                
+                EditorUtility.SetDirty(RailwayEditorSettings.Instance);
                 Repaint();
             }
             

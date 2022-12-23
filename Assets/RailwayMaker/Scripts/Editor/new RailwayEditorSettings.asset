@@ -28,7 +28,7 @@ MonoBehaviour:
   ControlLineThickness: 1
   InterControlLineThickness: 1
   RailLineThickness: 2
-  RailNormalThickness: 10
+  RailNormalThickness: 1
   RailNormalLength: 0.2
   RailNormalCount: 20
   SplitDistantSearchCount: 20

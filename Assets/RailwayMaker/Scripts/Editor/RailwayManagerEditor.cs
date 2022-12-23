@@ -273,6 +273,9 @@ namespace MrWhimble.RailwayMaker
 
         private void OnSceneGUI()
         {
+            
+            
+            
             updateInspector = false;
             closestPoint = -1;
 
@@ -305,6 +308,102 @@ namespace MrWhimble.RailwayMaker
             {
                 Repaint();
             }
+            
+        }
+
+        private void AddPoint_Internal(Point p)
+        {
+            if (points.Contains(p))
+                return;
+            
+            points.Add(p);
+            pointControlIDs.Add(-1);
+        }
+
+        private void RemovePoint_Internal(Point p)
+        {
+            if (p == null)
+                return;
+            if (!points.Contains(p))
+                return;
+
+            
+            
+            if (p is AnchorPoint a)
+            {
+                List<CurveUtility.CurvePointData> data = CurveUtility.GetCurvesWithPoint(curves, p);
+                for (int i = data.Count - 1; i >= 0; i--)
+                {
+                    RemoveCurve_Internal(data[i].curve);
+                }
+                
+                for (int i = a.controlPoints.Count -1; i >= 0; i--)
+                {
+                    RemovePoint_Internal(a.controlPoints[i]);
+                }
+                points.Remove(p);
+                pointControlIDs.RemoveAt(0);
+            } else if (p is ControlPoint c)
+            {
+                c.anchorPoint.RemoveControlPoint(c);
+                points.Remove(p);
+                pointControlIDs.RemoveAt(0);
+            }
+        }
+
+        // Handles add the curve and points to respective lists
+        private void AddCurve_Internal(BezierCurve c)
+        {
+            if (curves.Contains(c))
+                return;
+            
+            AddPoint_Internal(c.start);
+            AddPoint_Internal(c.controlStart);
+            AddPoint_Internal(c.controlEnd);
+            AddPoint_Internal(c.end);
+            curves.Add(c);
+        }
+        
+        // Handles removing the curve and points to respective lists
+        private void RemoveCurve_Internal(BezierCurve c, bool removeLonely = true)
+        {
+            if (c == null)
+                return;
+            if (!curves.Contains(c))
+                return;
+            
+            
+
+            if (removeLonely)
+            {
+                Point p = c.start;
+                c.start = null;
+                if (CurveUtility.GetCurvesCountWithPoint(curves, p) == 0)
+                    RemovePoint_Internal(p);
+
+                p = c.end;
+                c.end = null;
+                if (CurveUtility.GetCurvesCountWithPoint(curves, p) == 0)
+                    RemovePoint_Internal(p);
+            }
+            else
+            {
+                RemovePoint_Internal(c.controlStart);
+                RemovePoint_Internal(c.controlEnd);
+            }
+
+            curves.Remove(c);
+        }
+
+        private void RemovePointAtIndex_Internal(int index)
+        {
+            if (index < 0 || index >= points.Count)
+            {
+                Debug.LogWarning($"Trying to remove point at {index}, points Count = {points.Count}");
+                return;
+            }
+            points.RemoveAt(index);
+            pointControlIDs.RemoveAt(0);
         }
 
         private void MoveAddTool_Draw()
@@ -672,6 +771,7 @@ namespace MrWhimble.RailwayMaker
 
         private void AddCurveConnectedTo(int pointIndex)
         {
+            /*
             oldAnchor = (AnchorPoint)points[pointIndex];
             newAnchor = new AnchorPoint(oldAnchor.position, oldAnchor.rotation);
             newControlStart = new ControlPoint(oldAnchor, 1, true);
@@ -687,6 +787,16 @@ namespace MrWhimble.RailwayMaker
             pointControlIDs.Add(-1);
             updateNewCurve = true;
             //GUIUtility.hotControl = -1;
+            */
+
+            oldAnchor = (AnchorPoint) points[pointIndex];
+            newAnchor = new AnchorPoint(oldAnchor.position, oldAnchor.rotation);
+            newControlStart = new ControlPoint(oldAnchor, 1, true);
+            newControlEnd = new ControlPoint(newAnchor, 1, false);
+            
+            BezierCurve curve = new BezierCurve(oldAnchor, newControlStart, newControlEnd, newAnchor);
+            AddCurve_Internal(curve);
+            newPointIndex = points.IndexOf(newAnchor);
         }
 
         private void SavePathsAndCurves()
@@ -797,6 +907,7 @@ namespace MrWhimble.RailwayMaker
 
         private void AddNewCurve()
         {
+            /*
             int index = points.Count;
             points.Add(new AnchorPoint());
             points.Add(new ControlPoint());
@@ -823,10 +934,36 @@ namespace MrWhimble.RailwayMaker
             pointControlIDs.AddRange(new List<int>{-1,-1,-1,-1});
             
             SceneView.RepaintAll();
+            */
+
+            AnchorPoint start = new AnchorPoint();
+            ControlPoint cStart = new ControlPoint();
+            ControlPoint cEnd = new ControlPoint();
+            AnchorPoint end = new AnchorPoint();
+
+            cEnd.flipped = true;
+            
+            start.AddControlPoint(cStart);
+            end.AddControlPoint(cEnd);
+            
+            start.UpdatePosition(new Vector3(0, 0, 0));
+            end.UpdatePosition(new Vector3(4, 0, 0));
+            
+            cStart.UpdatePosition(new Vector3(1, 0, 1));
+            cEnd.UpdatePosition(new Vector3(3, 0, -1));
+
+            BezierCurve curve = new BezierCurve(start, cStart, cEnd, end);
+            
+            AddCurve_Internal(curve);
+            
+            SceneView.RepaintAll();
         }
 
         private void RemovePoint(Point p)
         {
+            /*
+            if (p == null)
+                return;
             List<CurvePointData> pCurves = GetCurvesWithPoint(p);
             for (int i = pCurves.Count - 1; i >= 0; i--)
             {
@@ -856,6 +993,9 @@ namespace MrWhimble.RailwayMaker
 
                 curves.Remove(pCurves[i].curve);
             }
+            */
+            
+            RemovePoint_Internal(p);
         }
 
         private void SplitCurve(BezierCurve c, float t)
@@ -879,19 +1019,26 @@ namespace MrWhimble.RailwayMaker
             mid.SetRotation(Quaternion.LookRotation(c.GetTangent(t), c.GetNormal(t)), false);
             low.Flip();
 
-            points.Add(mid);
-            points.Add(low);
-            points.Add(high);
-            pointControlIDs.Add(-1);
-            pointControlIDs.Add(-1);
-            pointControlIDs.Add(-1);
+            //points.Add(mid);
+            //points.Add(low);
+            //points.Add(high);
+            //pointControlIDs.Add(-1);
+            //pointControlIDs.Add(-1);
+            //pointControlIDs.Add(-1);
             
             c.controlStart.UpdatePosition(E);
             c.controlEnd.UpdatePosition(G);
 
-            curves.Remove(c);
-            curves.Add(new BezierCurve(c.start, c.controlStart, low, mid));
-            curves.Add(new BezierCurve(mid, high, c.controlEnd, c.end));
+            BezierCurve a = new BezierCurve(c.start, c.controlStart, low, mid);
+            BezierCurve b = new BezierCurve(mid, high, c.controlEnd, c.end);
+            AddCurve_Internal(a);
+            AddCurve_Internal(b);
+            RemoveCurve_Internal(c);
+            //curves.Remove(c);
+            //curves.Add(new BezierCurve(c.start, c.controlStart, low, mid));
+            //curves.Add(new BezierCurve(mid, high, c.controlEnd, c.end));
+
+
         }
 
         // p1 = overlapPoint , p2 = selectedPoint
@@ -903,7 +1050,7 @@ namespace MrWhimble.RailwayMaker
             float dot = Vector3.Dot(p1Forward, p2Forward);
             bool sameDirection = dot > 0;
             
-            List<CurvePointData> p2Data = GetCurvesWithPoint(p2);
+            List<CurveUtility.CurvePointData> p2Data = CurveUtility.GetCurvesWithPoint(curves, p2);
             
             bool checkP1 = false;
             for (int i = 0; i < p2Data.Count; i++)
@@ -921,7 +1068,7 @@ namespace MrWhimble.RailwayMaker
                     curve.controlEnd.anchorPoint.RemoveControlPoint(curve.controlEnd);
                     points.Remove(curve.controlEnd);
                     pointControlIDs.RemoveAt(0);
-                    if (GetCurvesCountWithPoint(p1) <= 1)
+                    if (CurveUtility.GetCurvesCountWithPoint(curves, p1) <= 1)
                     {
                         checkP1 = true;
                     }
@@ -940,7 +1087,7 @@ namespace MrWhimble.RailwayMaker
             
             if (checkP1)
             {
-                List<CurvePointData> data = GetCurvesWithPoint(p1);
+                List<CurveUtility.CurvePointData> data = CurveUtility.GetCurvesWithPoint(curves, p1);
                 if (data.Count <= 1)
                 {
                     if (data.Count == 1 && data[0].curve.IsInvalid())
@@ -951,44 +1098,6 @@ namespace MrWhimble.RailwayMaker
                     }
                 }
             }
-        }
-
-        private struct CurvePointData
-        {
-            public BezierCurve curve;
-            public BezierCurve.Sides side;
-
-            public CurvePointData(BezierCurve c, BezierCurve.Sides s)
-            {
-                curve = c;
-                side = s;
-            }
-            public ControlPoint GetControl() => side == BezierCurve.Sides.Start ? curve.controlStart : curve.controlEnd;
-            public AnchorPoint GetAnchor() => side == BezierCurve.Sides.Start ? curve.start : curve.end;
-        }
-        private List<CurvePointData> GetCurvesWithPoint(Point p)
-        {
-            List<CurvePointData> ret = new List<CurvePointData>();
-            foreach (var c in curves)
-            {
-                BezierCurve.Sides s = c.HasPoint(p);
-                if (s is BezierCurve.Sides.None)
-                    continue;
-                ret.Add(new CurvePointData(c, s));
-            }
-            return ret;
-        }
-        private int GetCurvesCountWithPoint(Point p)
-        {
-            int ret = 0;
-            foreach (var c in curves)
-            {
-                BezierCurve.Sides s = c.HasPoint(p);
-                if (s is BezierCurve.Sides.None)
-                    continue;
-                ret++;
-            }
-            return ret;
         }
 
         private struct CurveDistanceData

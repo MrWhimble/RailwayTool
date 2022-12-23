@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
@@ -42,6 +43,7 @@ namespace MrWhimble.RailwayMaker
                 }
             }
             
+            /*
             for (int i = 0; i < ret.Count; i++)
             {
                 switch (ret[i])
@@ -50,6 +52,11 @@ namespace MrWhimble.RailwayMaker
                     {
                         foreach (var t in pathPoints[i].connectedPoints)
                         {
+                            if (t == -1)
+                            {
+                                Debug.LogWarning($"point {i} has invalid points!");
+                                continue;
+                            }
                             p.AddControlPoint((ControlPoint)ret[t]);
                         }
 
@@ -58,6 +65,17 @@ namespace MrWhimble.RailwayMaker
                     default:
                         break;
                 }
+            }*/
+
+            foreach (var pathCurve in pathCurves)
+            {
+                AnchorPoint start = ret[pathCurve.start] as AnchorPoint;
+                ControlPoint controlStart = ret[pathCurve.controlStart] as ControlPoint;
+                ControlPoint controlEnd = ret[pathCurve.controlEnd] as ControlPoint;
+                AnchorPoint end = ret[pathCurve.end] as AnchorPoint;
+                
+                start.AddControlPoint(controlStart);
+                end.AddControlPoint(controlEnd);
             }
             
             return ret;
@@ -76,11 +94,18 @@ namespace MrWhimble.RailwayMaker
 
             for (int i = 0; i < pathCurves.Count; i++)
             {
-                ret.Add(new BezierCurve(
-                    (AnchorPoint)p[pathCurves[i].start],
-                    (ControlPoint)p[pathCurves[i].controlStart],
-                    (ControlPoint)p[pathCurves[i].controlEnd],
-                    (AnchorPoint)p[pathCurves[i].end]));
+                try
+                {
+                    ret.Add(new BezierCurve(
+                        (AnchorPoint) p[pathCurves[i].start],
+                        (ControlPoint) p[pathCurves[i].controlStart],
+                        (ControlPoint) p[pathCurves[i].controlEnd],
+                        (AnchorPoint) p[pathCurves[i].end]));
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Debug.LogError($"{e}\nError for curve {i}");
+                }
             }
 
             return ret;
