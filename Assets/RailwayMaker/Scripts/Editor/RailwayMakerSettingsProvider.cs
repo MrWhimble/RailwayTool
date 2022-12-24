@@ -111,6 +111,7 @@ namespace MrWhimble.RailwayMaker
             EditorGUILayout.LabelField("Split Tool Settings", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             RailwayEditorSettings.Instance.SplitLineColor = EditorGUILayout.ColorField("Split Indicator Line Color", RailwayEditorSettings.Instance.SplitLineColor);
+            RailwayEditorSettings.Instance.SplitLineThickness = Mathf.Max(0f, EditorGUILayout.FloatField("Split Line Thickness", RailwayEditorSettings.Instance.SplitLineThickness));
             RailwayEditorSettings.Instance.SplitDistantSearchCount = Mathf.Max(2, EditorGUILayout.IntField("Split Distance Search Count", RailwayEditorSettings.Instance.SplitDistantSearchCount));
             EditorGUI.indentLevel--;
 

@@ -50,9 +50,20 @@ namespace MrWhimble.RailwayMaker
             position = anchorPoint.position + dir;
         }
 
+        public void SetDistance(float dist)
+        {
+            distance = dist;
+            UpdatePosition();
+        }
+
         public void Flip()
         {
             flipped = !flipped;
+            UpdatePosition();
+        }
+        public void Flip(bool f)
+        {
+            flipped = f;
             UpdatePosition();
         }
     }

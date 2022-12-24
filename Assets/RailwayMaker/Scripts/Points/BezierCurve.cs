@@ -98,6 +98,21 @@ namespace MrWhimble.RailwayMaker
             return null;
         }
 
+        public void ClearAnchorOnSide(Sides s)
+        {
+            if (s == Sides.Start)
+                start = null;
+            else if (s == Sides.End)
+                end = null;
+        }
+        public void ClearControlOnSide(Sides s)
+        {
+            if (s == Sides.Start)
+                controlStart = null;
+            else if (s == Sides.End)
+                controlEnd = null;
+        }
+
         // https://stackoverflow.com/questions/4089443/find-the-tangent-of-a-point-on-a-cubic-bezier-curve
         public Vector3 GetVelocity(float t)
         {
@@ -133,11 +148,23 @@ namespace MrWhimble.RailwayMaker
                    t * t * t * end.position;
         }
 
+        public Quaternion GetRotation(float t)
+        {
+            return Quaternion.LookRotation(GetTangent(t), GetNormal(t));
+        }
+
         public bool IsInvalid()
         {
             if (start == end)
                 return true;
             if (start == null || end == null || controlStart == null || controlEnd == null)
+                return true;
+            return false;
+        }
+
+        public bool IsClear()
+        {
+            if (start == null && end == null && controlStart == null && controlEnd == null)
                 return true;
             return false;
         }

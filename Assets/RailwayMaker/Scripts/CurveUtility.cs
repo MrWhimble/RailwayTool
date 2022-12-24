@@ -51,6 +51,18 @@ namespace MrWhimble.RailwayMaker
             }
             return ret;
         }
+        public static List<CurvePointData> GetCurvesWithPoint(List<CurvePointData> curves, Point p)
+        {
+            List<CurvePointData> ret = new List<CurvePointData>();
+            foreach (var c in curves)
+            {
+                BezierCurve.Sides s = c.curve.HasPoint(p);
+                if (s is BezierCurve.Sides.None)
+                    continue;
+                ret.Add(new CurvePointData(c.curve, s));
+            }
+            return ret;
+        }
         public static int GetCurvesCountWithPoint(List<BezierCurve> curves, Point p)
         {
             int ret = 0;
