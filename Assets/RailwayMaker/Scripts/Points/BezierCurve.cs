@@ -148,9 +148,9 @@ namespace MrWhimble.RailwayMaker
                    t * t * t * end.position;
         }
 
-        public Quaternion GetRotation(float t)
+        public Quaternion GetRotation(float t, bool flip = false)
         {
-            return Quaternion.LookRotation(GetTangent(t), GetNormal(t));
+            return Quaternion.LookRotation(GetTangent(t) * (flip ? -1f : 1f), GetNormal(t));
         }
 
         public bool IsInvalid()
@@ -300,7 +300,7 @@ namespace MrWhimble.RailwayMaker
 
         public float GetTFromDistance(float distance)
         {
-            float dist = (distance / length) * (distanceTimeList.Length -1 );
+            float dist = (distance / length) * (distanceTimeList.Length - 1f);
             int index = Mathf.FloorToInt(dist);
             float t = dist % 1f;
             return Mathf.Lerp(distanceTimeList[index], distanceTimeList[index + 1], t);
