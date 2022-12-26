@@ -26,7 +26,8 @@ namespace MrWhimble.RailwayMaker.Graph
             curves = manager.PathData.GetCurves(points);
             foreach (BezierCurve c in curves)
             {
-                c.InitDistanceTimeList(100);
+                //c.InitDistanceTimeList(100);
+                c.InitDistanceList(100);
             }
         }
 

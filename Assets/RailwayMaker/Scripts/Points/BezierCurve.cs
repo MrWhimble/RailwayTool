@@ -1,5 +1,4 @@
-﻿using MrWhimble.ConstantConsole;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
@@ -30,6 +29,7 @@ namespace MrWhimble.RailwayMaker
 
         public float[] distanceTimeList;
         public Vector3[] distancePosList;
+        public float[] distanceList;
 
         public BezierCurve(AnchorPoint a, ControlPoint b, ControlPoint c, AnchorPoint d)
         {
@@ -259,13 +259,104 @@ namespace MrWhimble.RailwayMaker
             float t = dist % 1f;
             return Vector3.Lerp(distancePosList[index], distancePosList[index + 1], t);
         }
+
+        public void InitDistanceList(int segments)
+        {
+            if (!lengthCached)
+                CalculateLength();
+
+            if (segments < 2)
+                segments = 2;
+
+            distanceList = new float[segments];
+
+            float tStep = 1f / (float) (segments-1);
+            float tTotal = 0f;
+            float tDelta = tStep/20f;
+            float totalDistance = 0f;
+            int index = 0;
+            Vector3 prevPos = GetPosition(0f);
+
+            for (float t = 0f; t <= 1.0001f; t += tDelta)
+            {
+                Vector3 pos = GetPosition(t);
+                totalDistance += (prevPos - pos).magnitude;
+                if (tTotal <= t)
+                {
+                    tTotal += tStep;
+                    
+                    distanceList[index] = totalDistance;
+                    index++;
+                }
+                
+                prevPos = pos;
+            }
+
+            distanceList[0] = 0f;
+            distanceList[^1] = length;
+        }
+        
+        public float GetTFromDistance(float distance)
+        {
+            int index;
+            float tLerp;
+            (index, tLerp) = GetIndexAtBiggestDistanceBelowInput(distance);
+            int lowIndex = index - 1;
+            if (lowIndex == -1)
+                return 0f;
+
+            float t = 1f * ((float) lowIndex / (float) (distanceList.Length - 1));
+            t += tLerp;
+            
+
+            //float dist = (distance / length) * (distanceTimeList.Length - 1f);
+            //int index = Mathf.FloorToInt(dist);
+            //float t = dist % 1f;
+            //return Mathf.Lerp(distanceTimeList[index], distanceTimeList[index + 1], t);
+            return t;
+        }
+
+        private (int, float) GetIndexAtBiggestDistanceBelowInput(float dist)
+        {
+            //Debug.Log(dist);
+            int distanceListLength = distanceList.Length - 1;
+            float tDelta = 1f / (float) distanceList.Length;
+            if (dist < length*0.5f)
+            {
+                
+                int largestIndex = Mathf.CeilToInt(distanceListLength * 0.5f) + 2;
+                for (int i = largestIndex; i >= 1; i--) 
+                {
+                    int otherIndex = i - 1;
+                    //Debug.Log($"{distanceList[otherIndex]} | {distanceList[i]} <> {dist} ({distanceList[otherIndex] >= dist}-{distanceList[i] <= dist})");
+                    if (distanceList[otherIndex] <= dist && distanceList[i] >= dist)
+                    {
+                        return (i, tDelta * Mathf.InverseLerp(distanceList[otherIndex], distanceList[i], dist));
+                    }
+                }
+            }
+            else
+            {
+                
+                int largestIndex = Mathf.CeilToInt(distanceListLength);
+                for (int i = largestIndex; i > 0; i--)
+                {
+                    int otherIndex = i - 1;
+                    if (distanceList[otherIndex] <= dist && distanceList[i] >= dist)
+                    {
+                        return (i, tDelta * Mathf.InverseLerp(distanceList[otherIndex], distanceList[i], dist));
+                    }
+                }
+            }
+
+            return (-1, 0f);
+        }
         
         public void InitDistanceTimeList(int segments)
         {
             if (!lengthCached)
                 CalculateLength();
 
-            
 
             if (segments < 2)
                 segments = 2;
@@ -280,7 +371,7 @@ namespace MrWhimble.RailwayMaker
             int index = 1;
             distanceTimeList[0] = 0f;
             distanceTimeList[^1] = 1f;
-            for (float t = tDelta; t <= 1f; t+=tDelta)
+            for (float t = tDelta; t < 1f; t+=tDelta)
             {
                 Vector3 pos = GetPosition(t);
                 float dist = (prevPos - pos).magnitude;
@@ -296,14 +387,16 @@ namespace MrWhimble.RailwayMaker
                 travelled += dist;
                 prevPos = pos;
             }
+            
         }
 
+        /*
         public float GetTFromDistance(float distance)
         {
             float dist = (distance / length) * (distanceTimeList.Length - 1f);
             int index = Mathf.FloorToInt(dist);
             float t = dist % 1f;
             return Mathf.Lerp(distanceTimeList[index], distanceTimeList[index + 1], t);
-        }
+        }*/
     }
 }
