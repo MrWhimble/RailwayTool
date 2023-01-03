@@ -30,6 +30,7 @@ namespace MrWhimble.RailwayMaker
         public float[] distanceTimeList;
         public Vector3[] distancePosList;
         public float[] distanceList;
+        public int halfwayIndex;
 
         public BezierCurve(AnchorPoint a, ControlPoint b, ControlPoint c, AnchorPoint d)
         {
@@ -284,7 +285,9 @@ namespace MrWhimble.RailwayMaker
                 if (tTotal <= t)
                 {
                     tTotal += tStep;
-                    
+
+                    if (totalDistance > length / 2)
+                        halfwayIndex = index;
                     distanceList[index] = totalDistance;
                     index++;
                 }
@@ -324,7 +327,7 @@ namespace MrWhimble.RailwayMaker
             if (dist < length*0.5f)
             {
                 
-                int largestIndex = Mathf.CeilToInt(distanceListLength * 0.5f) + 2;
+                int largestIndex = halfwayIndex;
                 for (int i = largestIndex; i >= 1; i--) 
                 {
                     int otherIndex = i - 1;
