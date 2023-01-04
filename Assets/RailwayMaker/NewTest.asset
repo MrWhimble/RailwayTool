@@ -469,17 +469,17 @@ MonoBehaviour:
     flipped: 1
     connectedPoints: 49000000
   - pointType: 1
-    position: {x: 1.8262348, y: 5.675663, z: 50.29922}
+    position: {x: 3.8944674, y: 5.053296, z: 50.401592}
     rotation: {x: 0, y: 0.99999964, z: 0, w: -0.00089158525}
     flipped: 1
     connectedPoints: 5c000000
   - pointType: 0
-    position: {x: 6.1512384, y: 5.675663, z: 50.24427}
+    position: {x: 8.219471, y: 5.053296, z: 50.34664}
     rotation: {x: 0.7115843, y: -0.00000003110434, z: 0.7026007, w: -0.000000030711654}
     flipped: 1
     connectedPoints: 5d0000005b000000
   - pointType: 1
-    position: {x: 10.353386, y: 5.675663, z: 50.19088}
+    position: {x: 12.421618, y: 5.053296, z: 50.29325}
     rotation: {x: 0.7115843, y: -0.00000003110434, z: 0.7026007, w: -0.000000030711654}
     flipped: 0
     connectedPoints: 5c000000
