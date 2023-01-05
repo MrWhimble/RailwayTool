@@ -986,12 +986,12 @@ namespace MrWhimble.RailwayMaker
                 }
 
                 cBestT -= delta * 0.5f;
-                float oldBest = delta;
+                float lastT = cBestT+delta;
                 delta *= delta;
                 cBestT = Mathf.Clamp01(cBestT);
                 
                 cBestDist = Mathf.Infinity;
-                for (float t = cBestT; t <= cBestT+oldBest; t += delta)
+                for (float t = cBestT; t <= lastT; t += delta)
                 {
                     if (t > 1)
                         break;

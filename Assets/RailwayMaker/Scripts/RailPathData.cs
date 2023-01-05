@@ -11,6 +11,11 @@ namespace MrWhimble.RailwayMaker
         public List<PathPoint> pathPoints;
         public List<PathCurve> pathCurves;
 
+        public bool IsValid()
+        {
+            return pathPoints != null && pathCurves != null && pathPoints.Count != 0 && pathCurves.Count != 0;
+        }
+        
         public List<Point> GetPoints()
         {
             List<Point> ret = new List<Point>();
@@ -42,30 +47,6 @@ namespace MrWhimble.RailwayMaker
                     }
                 }
             }
-            
-            /*
-            for (int i = 0; i < ret.Count; i++)
-            {
-                switch (ret[i])
-                {
-                    case AnchorPoint p:
-                    {
-                        foreach (var t in pathPoints[i].connectedPoints)
-                        {
-                            if (t == -1)
-                            {
-                                Debug.LogWarning($"point {i} has invalid points!");
-                                continue;
-                            }
-                            p.AddControlPoint((ControlPoint)ret[t]);
-                        }
-
-                        break;
-                    }
-                    default:
-                        break;
-                }
-            }*/
 
             foreach (var pathCurve in pathCurves)
             {

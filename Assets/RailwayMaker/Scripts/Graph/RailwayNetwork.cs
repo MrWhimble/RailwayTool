@@ -226,10 +226,6 @@ namespace MrWhimble.RailwayMaker.Graph
                 parent = startNode
             });
 
-            float g = 0f;
-
-
-            int ind = 0;
             while (openList.Count > 0)
             {
                 Node currentNode = null;

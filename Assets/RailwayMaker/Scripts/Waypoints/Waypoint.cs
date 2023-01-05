@@ -1,38 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
     public class Waypoint : MonoBehaviour, IWaypoint
     {
-        private int _curveIndex;
-
+        GameObject IWaypoint.gameObject => this.gameObject;
+        
+        [SerializeField, HideInInspector] private int _curveIndex;
         public int CurveIndex
         {
             get => _curveIndex;
-            set { }
+            set => _curveIndex = value;
         }
         
-        private float _ratioAlongCurve;
+        [SerializeField, HideInInspector] private float _ratioAlongCurve;
         public float RatioAlongCurve
         {
             get => _ratioAlongCurve;
             set => _ratioAlongCurve = Mathf.Clamp01(value);
-        }
-        
-    }
-
-    public interface IWaypoint
-    {
-        int CurveIndex
-        {
-            get;
-            set;
-        }
-
-        float RatioAlongCurve
-        {
-            get;
-            set;
         }
     }
 }

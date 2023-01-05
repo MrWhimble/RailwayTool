@@ -1,4 +1,6 @@
-﻿namespace MrWhimble.RailwayMaker.Graph
+﻿using System;
+
+namespace MrWhimble.RailwayMaker.Graph
 {
     public struct RouteSectionData
     {
@@ -19,6 +21,16 @@
             }
 
             return false;
+        }
+
+        public bool Equals(RouteSectionData other)
+        {
+            return Equals(node, other.node) && Equals(curve, other.curve) && reverse == other.reverse;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(node, curve, reverse);
         }
     }
 }
