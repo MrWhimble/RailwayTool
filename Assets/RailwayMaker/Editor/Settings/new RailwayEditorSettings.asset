@@ -30,5 +30,6 @@ MonoBehaviour:
   RailLineThickness: 2
   RailNormalThickness: 1
   RailNormalLength: 0.2
+  SplitLineThickness: 1
   RailNormalCount: 20
   SplitDistantSearchCount: 20

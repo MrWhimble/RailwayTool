@@ -154,23 +154,23 @@ MonoBehaviour:
     flipped: 0
     connectedPoints: 1a000000
   - pointType: 1
-    position: {x: 13.880782, y: 0, z: -29.968052}
+    position: {x: 13.88078, y: 0, z: -29.968052}
     rotation: {x: 0, y: 0.99999887, z: -0, w: -0.0015264588}
     flipped: 1
     connectedPoints: 1d000000
   - pointType: 0
     position: {x: 19.96867, y: 0, z: -29.967325}
-    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.70714897}
+    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.7071491}
     flipped: 1
     connectedPoints: 280000001c0000001c000000
   - pointType: 1
     position: {x: 29.86278, y: 0, z: 9.054666}
-    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.70714897}
+    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.7071491}
     flipped: 0
     connectedPoints: 11000000
   - pointType: 1
     position: {x: 30.025627, y: 0, z: -8.967008}
-    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.70714897}
+    rotation: {x: 0, y: 0.70706457, z: 0, w: 0.7071491}
     flipped: 1
     connectedPoints: 20000000
   - pointType: 0
@@ -214,12 +214,12 @@ MonoBehaviour:
     flipped: 0
     connectedPoints: 11000000
   - pointType: 1
-    position: {x: 5.3872366, y: 0, z: -29.969065}
+    position: {x: 14.988289, y: 0, z: -29.96792}
     rotation: {x: 0, y: 0.9999998, z: -0, w: -0.00064014766}
     flipped: 1
     connectedPoints: 1d000000
   - pointType: 1
-    position: {x: -24.924671, y: 0, z: -29.923851}
+    position: {x: -34.553425, y: 0, z: -29.92195}
     rotation: {x: 0, y: 0.9999998, z: -0, w: -0.00064014766}
     flipped: 0
     connectedPoints: 2a000000
@@ -227,7 +227,7 @@ MonoBehaviour:
     position: {x: -39.79533, y: 0, z: -29.920916}
     rotation: {x: 0, y: 0.70717657, z: 0, w: 0.70703703}
     flipped: 0
-    connectedPoints: 2e0000002900000029000000
+    connectedPoints: 290000002b0000002b000000
   - pointType: 1
     position: {x: -42.994045, y: 0, z: -29.920284}
     rotation: {x: 0, y: 0.70717657, z: 0, w: 0.70703703}
@@ -374,12 +374,12 @@ MonoBehaviour:
     flipped: 1
     connectedPoints: 46000000
   - pointType: 1
-    position: {x: 39.913593, y: 5, z: 19.824123}
+    position: {x: 48.652977, y: -3.0489616, z: 20.160429}
     rotation: {x: 0, y: 1, z: 0, w: 0.00023457392}
     flipped: 0
     connectedPoints: 49000000
   - pointType: 0
-    position: {x: 39.91203, y: 5, z: 30.011066}
+    position: {x: 48.651413, y: -3.0489616, z: 30.347372}
     rotation: {x: 0, y: 1, z: 0, w: 0.000076768854}
     flipped: 0
     connectedPoints: 5a00000048000000
@@ -389,38 +389,38 @@ MonoBehaviour:
     flipped: 0
     connectedPoints: 30000000
   - pointType: 1
-    position: {x: -30.060474, y: 5, z: -10.016464}
+    position: {x: -30.060476, y: 5, z: -10.016464}
     rotation: {x: 0, y: 1, z: 0, w: 0.000076768854}
     flipped: 1
     connectedPoints: 4c000000
   - pointType: 0
     position: {x: -30.060127, y: 5, z: -0.066934586}
-    rotation: {x: 0, y: 0.000017428225, z: 0, w: 1}
+    rotation: {x: 0, y: 0.000017564442, z: 0, w: 1}
     flipped: 1
     connectedPoints: 4d0000004b000000
   - pointType: 1
-    position: {x: -30.05977, y: 5, z: 10.165726}
-    rotation: {x: 0, y: 0.000017428225, z: 0, w: 1}
+    position: {x: -30.060034, y: 5, z: 2.5935566}
+    rotation: {x: 0, y: 0.000017564442, z: 0, w: 1}
     flipped: 0
     connectedPoints: 4c000000
   - pointType: 1
-    position: {x: -29.755188, y: 5, z: 30.076794}
-    rotation: {x: 0, y: 0.000017428225, z: 0, w: 1}
+    position: {x: -29.758377, y: 5, z: 37.322796}
+    rotation: {x: 0, y: 0.000017564442, z: 0, w: 1}
     flipped: 1
     connectedPoints: 4f000000
   - pointType: 0
     position: {x: -29.75959, y: 5, z: 40.077377}
-    rotation: {x: 0, y: -0.00022009519, z: -0, w: 1}
+    rotation: {x: 0, y: -0.000220192, z: -0, w: 1}
     flipped: 1
-    connectedPoints: 500000004e000000
+    connectedPoints: 4e00000050000000
   - pointType: 1
     position: {x: -29.762215, y: 5, z: 46.038082}
-    rotation: {x: 0, y: -0.00022009519, z: -0, w: 1}
+    rotation: {x: 0, y: -0.000220192, z: -0, w: 1}
     flipped: 0
     connectedPoints: 4f000000
   - pointType: 1
     position: {x: -25.810966, y: 5, z: 50.469933}
-    rotation: {x: 0, y: -0.00022009519, z: -0, w: 1}
+    rotation: {x: 0, y: -0.000220192, z: -0, w: 1}
     flipped: 1
     connectedPoints: 52000000
   - pointType: 0
@@ -449,22 +449,22 @@ MonoBehaviour:
     flipped: 0
     connectedPoints: 55000000
   - pointType: 1
-    position: {x: 40.02351, y: 5, z: 45.98834}
+    position: {x: 49.455444, y: 0.5851059, z: 53.28821}
     rotation: {x: 0, y: 0.70710826, z: 0, w: 0.7071053}
     flipped: 1
     connectedPoints: 58000000
   - pointType: 0
-    position: {x: 40.01245, y: 5, z: 39.786148}
+    position: {x: 49.444386, y: 0.5851059, z: 47.08602}
     rotation: {x: 0, y: 0.99999964, z: 0, w: -0.00089158525}
     flipped: 1
     connectedPoints: 5900000057000000
   - pointType: 1
-    position: {x: 40.007065, y: 5, z: 36.76549}
+    position: {x: 49.439, y: 0.5851059, z: 44.065365}
     rotation: {x: 0, y: 0.99999964, z: 0, w: -0.00089158525}
     flipped: 0
     connectedPoints: 58000000
   - pointType: 1
-    position: {x: 39.911568, y: 5, z: 33.017353}
+    position: {x: 48.65095, y: -3.0489616, z: 33.35366}
     rotation: {x: 0, y: 0.99999964, z: 0, w: -0.00089158525}
     flipped: 1
     connectedPoints: 49000000
@@ -513,6 +513,111 @@ MonoBehaviour:
     rotation: {x: 0.50239784, y: -0.50239784, z: 0.49759057, w: -0.49759057}
     flipped: 0
     connectedPoints: 62000000
+  - pointType: 0
+    position: {x: -20.030634, y: 0.026903491, z: -30.029264}
+    rotation: {x: -0.0054358793, y: 0.70865357, z: -0.0056960415, w: -0.70551264}
+    flipped: 0
+    connectedPoints: 7700000065000000
+  - pointType: 1
+    position: {x: -27.743523, y: -0.09453833, z: -30.063505}
+    rotation: {x: -0.0054358793, y: 0.70865357, z: -0.0056960415, w: -0.70551264}
+    flipped: 0
+    connectedPoints: 64000000
+  - pointType: 1
+    position: {x: 8.171514, y: -0.06946828, z: -30.074516}
+    rotation: {x: -0.0054358793, y: 0.70865357, z: -0.0056960415, w: -0.70551264}
+    flipped: 1
+    connectedPoints: 67000000
+  - pointType: 0
+    position: {x: 0.76421505, y: 0, z: -29.956228}
+    rotation: {x: -0.0038104134, y: -0.7014287, z: -0.002812262, w: 0.7127239}
+    flipped: 1
+    connectedPoints: 7800000066000000
+  - pointType: 1
+    position: {x: -27.99361, y: 4.041465, z: 15.823773}
+    rotation: {x: -0.0038104134, y: -0.7014287, z: -0.002812262, w: 0.7127239}
+    flipped: 1
+    connectedPoints: 69000000
+  - pointType: 0
+    position: {x: -27.744745, y: 4.226303, z: 19.435339}
+    rotation: {x: -0.025525289, y: 0.03435482, z: -0.00017145413, w: 0.9990837}
+    flipped: 1
+    connectedPoints: 6a00000068000000
+  - pointType: 1
+    position: {x: -27.332275, y: 4.5326543, z: 25.421156}
+    rotation: {x: -0.025525289, y: 0.03435482, z: -0.00017145413, w: 0.9990837}
+    flipped: 0
+    connectedPoints: 69000000
+  - pointType: 1
+    position: {x: -29.913725, y: 18.829025, z: 25.73589}
+    rotation: {x: -0.025525289, y: 0.03435482, z: -0.00017145413, w: 0.9990837}
+    flipped: 1
+    connectedPoints: 6c000000
+  - pointType: 0
+    position: {x: -29.913725, y: 18.489746, z: 19.531466}
+    rotation: {x: 0.999627, y: 0, z: 0, w: 0.027311169}
+    flipped: 1
+    connectedPoints: 6d0000006b000000
+  - pointType: 1
+    position: {x: -29.913725, y: 18.19263, z: 14.098106}
+    rotation: {x: 0.999627, y: 0, z: 0, w: 0.027311169}
+    flipped: 0
+    connectedPoints: 6c000000
+  - pointType: 1
+    position: {x: -31.29186, y: 4.7416315, z: 12.934312}
+    rotation: {x: 0.999627, y: 0, z: 0, w: 0.027311169}
+    flipped: 1
+    connectedPoints: 6f000000
+  - pointType: 0
+    position: {x: -30.909447, y: 4.887659, z: 18.269445}
+    rotation: {x: -0.013646298, y: 0.035763852, z: 0.00025346092, w: 0.9992671}
+    flipped: 1
+    connectedPoints: 6e00000070000000
+  - pointType: 1
+    position: {x: -30.634354, y: 4.992705, z: 22.107311}
+    rotation: {x: -0.013646298, y: 0.035763852, z: 0.00025346092, w: 0.9992671}
+    flipped: 0
+    connectedPoints: 6f000000
+  - pointType: 1
+    position: {x: -27.939835, y: 8.2261915, z: 28.236633}
+    rotation: {x: -0.013646298, y: 0.035763852, z: 0.00025346092, w: 0.9992671}
+    flipped: 1
+    connectedPoints: 72000000
+  - pointType: 0
+    position: {x: -28.581434, y: 11.783127, z: 28.33008}
+    rotation: {x: -0.6975591, y: 0.02209872, z: 0.14938754, w: 0.7004329}
+    flipped: 1
+    connectedPoints: 7300000071000000
+  - pointType: 1
+    position: {x: -29.229483, y: 15.37581, z: 28.424465}
+    rotation: {x: -0.6975591, y: 0.02209872, z: 0.14938754, w: 0.7004329}
+    flipped: 0
+    connectedPoints: 72000000
+  - pointType: 1
+    position: {x: -30.343248, y: 14.785956, z: 11.145951}
+    rotation: {x: -0.6975591, y: 0.02209872, z: 0.14938754, w: 0.7004329}
+    flipped: 1
+    connectedPoints: 75000000
+  - pointType: 0
+    position: {x: -30.68522, y: 11.456058, z: 10.83127}
+    rotation: {x: 0.7390056, y: -0.025844706, z: -0.04532676, w: 0.67167574}
+    flipped: 1
+    connectedPoints: 7600000074000000
+  - pointType: 1
+    position: {x: -31.034101, y: 8.058889, z: 10.510233}
+    rotation: {x: 0.7390056, y: -0.025844706, z: -0.04532676, w: 0.67167574}
+    flipped: 0
+    connectedPoints: 75000000
+  - pointType: 1
+    position: {x: -13.560252, y: 0.12878166, z: -30.00054}
+    rotation: {x: 0.7390056, y: -0.025844706, z: -0.04532676, w: 0.67167574}
+    flipped: 1
+    connectedPoints: 64000000
+  - pointType: 1
+    position: {x: -6.5777206, y: 0.068855286, z: -29.838984}
+    rotation: {x: 0.7390056, y: -0.025844706, z: -0.04532676, w: 0.67167574}
+    flipped: 0
+    connectedPoints: 67000000
   pathCurves:
   - start: 0
     controlStart: 1
@@ -570,10 +675,6 @@ MonoBehaviour:
     controlStart: 38
     controlEnd: 39
     end: 17
-  - start: 29
-    controlStart: 40
-    controlEnd: 41
-    end: 42
   - start: 42
     controlStart: 43
     controlEnd: 44
@@ -622,10 +723,6 @@ MonoBehaviour:
     controlStart: 74
     controlEnd: 75
     end: 76
-  - start: 76
-    controlStart: 77
-    controlEnd: 78
-    end: 79
   - start: 79
     controlStart: 80
     controlEnd: 81
@@ -654,3 +751,39 @@ MonoBehaviour:
     controlStart: 99
     controlEnd: 84
     end: 85
+  - start: 100
+    controlStart: 101
+    controlEnd: 41
+    end: 42
+  - start: 29
+    controlStart: 40
+    controlEnd: 102
+    end: 103
+  - start: 76
+    controlStart: 77
+    controlEnd: 104
+    end: 105
+  - start: 111
+    controlStart: 112
+    controlEnd: 78
+    end: 79
+  - start: 105
+    controlStart: 106
+    controlEnd: 113
+    end: 114
+  - start: 114
+    controlStart: 115
+    controlEnd: 107
+    end: 108
+  - start: 108
+    controlStart: 109
+    controlEnd: 116
+    end: 117
+  - start: 117
+    controlStart: 118
+    controlEnd: 110
+    end: 111
+  - start: 100
+    controlStart: 119
+    controlEnd: 120
+    end: 103
