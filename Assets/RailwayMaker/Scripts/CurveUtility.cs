@@ -110,7 +110,7 @@ namespace MrWhimble.RailwayMaker
                 Vector3[] curvePoints = GetCurvePointsUsingPathData(pathCurve, pathData.pathPoints);
                 //Debug.Log($"{curvePoints[0]}, {curvePoints[1]}, {curvePoints[2]}, {curvePoints[3]}");
 
-                for (float t = 0f; t <= 1f; t += delta)
+                for (float t = 0f; t <= 1.0001f; t += delta)
                 {
                     Vector3 cPos = GetPointFromTOnCubicBezierCurve(curvePoints, t);
                     float dist = Vector3.Distance(cPos, point);

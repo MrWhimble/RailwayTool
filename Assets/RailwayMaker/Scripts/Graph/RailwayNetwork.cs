@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Transactions;
-using MrWhimble.ConstantConsole;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace MrWhimble.RailwayMaker.Graph
 {
-    [RequireComponent(typeof(RailwayManager))]
-    public class RailwayNetwork : MonoBehaviour
+    public class RailwayNetwork
     {
         private RailwayManager manager;
         private List<Point> points;
@@ -15,9 +11,9 @@ namespace MrWhimble.RailwayMaker.Graph
 
         private List<RailNode> railNodes;
 
-        public void Init()
+        public RailwayNetwork(RailwayManager m)
         {
-            manager = GetComponent<RailwayManager>();
+            manager = m;
 
             if (manager == null || manager.PathData == null)
                 return;
@@ -29,13 +25,8 @@ namespace MrWhimble.RailwayMaker.Graph
                 //c.InitDistanceTimeList(100);
                 c.InitDistanceList(100);
             }
-        }
-
-        private void Awake()
-        {
-            Init();
+            
             ConstructNetwork();
-            //StartCoroutine(ConstructNetwork());
         }
 
         private void ConstructNetwork()
@@ -301,6 +292,23 @@ namespace MrWhimble.RailwayMaker.Graph
                 //yield return new WaitForSeconds(delta);
             }
             //yield break;
+            return RouteState.Failed;
+        }
+
+        public RouteState GetRoute(RoutingTable table, ref RailwayRoute route)
+        {
+            IWaypoint waypoint = GameObject.Find(table.elements[0].waypointName).GetComponent<IWaypoint>();
+            BezierCurve curve = curves[waypoint.CurveIndex];
+            RailNode railNode = null;
+            for (int i = 0; i < railNodes.Count; i++)
+            {
+                if (railNodes[i].anchor == curve.start)
+                {
+                    railNode = railNodes[i];
+                }
+            }
+            Node node = railNode.GetNode(table.elements[0].side);
+
             return RouteState.Failed;
         }
 

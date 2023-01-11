@@ -13,6 +13,7 @@ namespace MrWhimble.RailwayMaker
         
         private static List<Vector3> _prevWaypointPositions;
         private static List<IWaypoint> _waypoints;
+        public static List<IWaypoint> Waypoints => _waypoints;
 
         static WaypointEditorManager()
         {
@@ -66,7 +67,6 @@ namespace MrWhimble.RailwayMaker
                     //Handles.DrawLine(_waypoints[index].gameObject.transform.position, _waypoints[index].gameObject.transform.position + Vector3.up * 8f);
                     var data = CurveUtility.GetClosestCurveToPointUsingPathData(_railwayManager.PathData,
                         _waypoints[index].gameObject.transform.position);
-                    Debug.Log(data.curveIndex);
                     _waypoints[index].CurveIndex = data.curveIndex;
                     _waypoints[index].RatioAlongCurve = data.t;
                     EditorUtility.SetDirty(_waypoints[index].gameObject);

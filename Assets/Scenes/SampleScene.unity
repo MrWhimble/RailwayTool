@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 103564088}
 --- !u!4 &34327005
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 239659986}
 --- !u!4 &103564089
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 1863302525}
 --- !u!4 &190735069
@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 1956282476}
 --- !u!4 &239659987
@@ -897,7 +897,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 190735068}
 --- !u!4 &1099919685
@@ -915,6 +915,53 @@ Transform:
   - {fileID: 1784722981}
   m_Father: {fileID: 0}
   m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1162653690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1162653692}
+  - component: {fileID: 1162653691}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1162653691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162653690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb00f8bba5214b938c6a60ee4ecc3b99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _curveIndex: 17
+  _ratioAlongCurve: 0.19499998
+  waypointName: Not a GameObject
+--- !u!4 &1162653692
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162653690}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -9.26, y: 0, z: 7.94}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1389477586
 GameObject:
@@ -993,7 +1040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 34327004}
 --- !u!4 &1468792041
@@ -1162,7 +1209,7 @@ GameObject:
   m_Layer: 0
   m_Name: Waypoint
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1178,8 +1225,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb00f8bba5214b938c6a60ee4ecc3b99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _curveIndex: 20
-  _ratioAlongCurve: 0.35999998
+  _curveIndex: 14
+  _ratioAlongCurve: 0.6800001
+  waypointName: 
 --- !u!4 &1601620139
 Transform:
   m_ObjectHideFlags: 0
@@ -1188,7 +1236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601620137}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -55.43, y: 0, z: -23.68}
+  m_LocalPosition: {x: -21.86, y: 0, z: -26.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1378,7 +1426,7 @@ GameObject:
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -1394,8 +1442,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 107c08e26a234c868c36a40ba1c0fbc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _curveIndex: 9
-  _ratioAlongCurve: 0.48750004
+  _curveIndex: 14
+  _ratioAlongCurve: 0.37499997
+  stationName: 
 --- !u!4 &1842370221
 Transform:
   m_ObjectHideFlags: 0
@@ -1404,7 +1453,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1842370219}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.01, y: 0, z: -23.82}
+  m_LocalPosition: {x: -1.36, y: 0, z: -28.21}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1440,7 +1489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 0}
 --- !u!4 &1863302526
@@ -1550,7 +1599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e976b732efa4c568231a84dea3f1ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  network: {fileID: 1474970951}
+  networkBehaviour: {fileID: 1474970951}
   speed: 4
   leader: {fileID: 1099919684}
 --- !u!4 &1956282477

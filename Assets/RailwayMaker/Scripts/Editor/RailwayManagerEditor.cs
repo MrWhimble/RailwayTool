@@ -972,7 +972,7 @@ namespace MrWhimble.RailwayMaker
                 float cBestT = 0;
                 float cBestDist = Mathf.Infinity;
                 Vector3 cBestRayPoint = Vector3.zero;
-                for (float t = 0f; t <= 1f; t+=delta)
+                for (float t = 0f; t <= 1.0001f; t+=delta)
                 {
                     Vector3 cPos = c.GetPosition(t);
                     Vector3 rPos = GetClosestPointOnRay(ray, cPos);

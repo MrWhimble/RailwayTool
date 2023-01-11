@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace MrWhimble.RailwayMaker
 {
-    public class Waypoint : MonoBehaviour, IWaypoint
+    public class Station : MonoBehaviour, IWaypoint
     {
         GameObject IWaypoint.gameObject => this.gameObject;
         
@@ -19,6 +18,13 @@ namespace MrWhimble.RailwayMaker
         {
             get => _ratioAlongCurve;
             set => _ratioAlongCurve = Mathf.Clamp01(value);
+        }
+
+        [SerializeField] private string stationName;
+        public string Name
+        {
+            get => string.IsNullOrWhiteSpace(stationName) ? name : stationName;
+            set => stationName = value;
         }
     }
 }

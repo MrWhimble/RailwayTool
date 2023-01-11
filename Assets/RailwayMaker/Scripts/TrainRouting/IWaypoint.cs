@@ -9,5 +9,7 @@ namespace MrWhimble.RailwayMaker
         GameObject gameObject { get; }
         int CurveIndex { get; set; }
         float RatioAlongCurve { get; set; }
+        
+        string Name { get; set; }
     }
 }

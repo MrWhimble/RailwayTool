@@ -9,7 +9,7 @@ namespace MrWhimble.RailwayMaker.Train
 {
     public class Bogie : MonoBehaviour
     {
-        [SerializeField] private RailwayNetwork network;
+        [SerializeField] private RailwayNetworkBehaviour networkBehaviour;
 
         private Node _previousNode;
         private Node _currentNode;
@@ -86,7 +86,7 @@ namespace MrWhimble.RailwayMaker.Train
             if (leader != null)
                 SetLeader(leader);
 
-            _previousNode = network.GetClosestNode(transform.position, transform.rotation, false);
+            _previousNode = networkBehaviour.railwayNetwork.GetClosestNode(transform.position, transform.rotation, false);
         }
 
         private void Update()
@@ -96,7 +96,7 @@ namespace MrWhimble.RailwayMaker.Train
 
             if (createNewPath && IsFront)
             {
-                Node endNode = network.GetRandomNode();
+                Node endNode = networkBehaviour.railwayNetwork.GetRandomNode();
                 GetRoute(_previousNode, endNode);
                 MoveAlongPath(Time.deltaTime, IsFront);
             }
@@ -105,7 +105,7 @@ namespace MrWhimble.RailwayMaker.Train
         private void GetRoute(Node start, Node end)
         {
             if (IsLeader || IsSolo)
-                network.GetRoute(start, transform.forward, end, ref _route);
+                networkBehaviour.railwayNetwork.GetRoute(start, transform.forward, end, ref _route);
             if (HasFollowers)
             {
                 foreach (var f in _followers)
