@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MrWhimble.ConstantConsole;
 using MrWhimble.RailwayMaker.Graph;
+using MrWhimble.RailwayMaker.Routing;
 using UnityEngine;
 
 namespace MrWhimble.RailwayMaker.Train
@@ -11,13 +12,25 @@ namespace MrWhimble.RailwayMaker.Train
     {
         [SerializeField] private RailwayNetworkBehaviour networkBehaviour;
 
+        [SerializeField] private RoutingTable routingTable;
+
+        [SerializeField, Min(0.0001f)] private float acceleration; 
+        [SerializeField, Min(0f)] private float maxSpeed;
+        private float _speed;
+        
+        [SerializeField] private Bogie leader;
+
+        private int _routingTableIndex;
+        private bool _stopAtNextWaypoint;
+        private LeaveCondition _waypointLeaveCondition;
+        private bool _waiting;
+        private float _waitTimer;
+        
         private Node _previousNode;
         private Node _currentNode;
         private Node _nextNode;
 
         private RailwayRoute _route;
-
-        [SerializeField, Min(0f)] private float speed;
 
         private float _tValue;
         private float _distanceTravelled;
@@ -25,14 +38,20 @@ namespace MrWhimble.RailwayMaker.Train
         private BezierCurve _currentCurve;
         private bool _reverseCurve;
 
-        [SerializeField] private Bogie leader;
+        
+        
+        
+        
+        private float _distanceToLeader;
         private List<Bogie> _followers;
         private bool HasFollowers => _followers != null && _followers.Count > 0;
         private bool IsLeader => leader == null && HasFollowers;
         private bool IsTail => leader != null && !HasFollowers;
         private bool IsSolo => leader == null && !HasFollowers;
         private bool IsFront => leader == null;
-        private float _distanceToLeader;
+        
+        private float StoppingDistance => (_speed * _speed) / (2 * acceleration);
+        
 
         private RouteSectionData previousSectionData;
 
@@ -77,8 +96,9 @@ namespace MrWhimble.RailwayMaker.Train
         {
             _followers = new List<Bogie>();
             _sharedRoute = new RailwayRoute();
-            
-            
+            _routingTableIndex = 0;
+
+            _speed = 0f;
         }
         
         private void Start()
@@ -86,7 +106,18 @@ namespace MrWhimble.RailwayMaker.Train
             if (leader != null)
                 SetLeader(leader);
 
-            _previousNode = networkBehaviour.railwayNetwork.GetClosestNode(transform.position, transform.rotation, false);
+            if (routingTable == null)
+                _previousNode = networkBehaviour.railwayNetwork.GetClosestNode(transform.position, transform.rotation, false);
+            else
+            {
+                RoutingTableElement element = routingTable.elements[_routingTableIndex];
+                IWaypoint prevWaypoint = networkBehaviour.railwayNetwork.Waypoints[element.waypointName];
+                _previousNode = networkBehaviour.railwayNetwork.GetNodeAtIndex(prevWaypoint.RailNodeIndex, element.side);
+                transform.forward = _previousNode.railNode.direction *
+                                    (_previousNode.isNodeA ? 1f : -1f);// *
+                                    //(routingTable.reverseDirection ? -1f : 1f);
+                _routingTableIndex = (_routingTableIndex + 1) % routingTable.elements.Count;
+            }
         }
 
         private void Update()
@@ -94,11 +125,54 @@ namespace MrWhimble.RailwayMaker.Train
             //ConstantDebug.Log($"IsLeader = {IsLeader}\nIsFront = {IsFront}", this);
             bool createNewPath = !MoveAlongPath(Time.deltaTime, IsFront);
 
-            if (createNewPath && IsFront)
+
+
+            if (IsFront)
             {
-                Node endNode = networkBehaviour.railwayNetwork.GetRandomNode();
-                GetRoute(_previousNode, endNode);
-                MoveAlongPath(Time.deltaTime, IsFront);
+                if (createNewPath)
+                {
+                    Node endNode = null;
+                    if (routingTable == null)
+                    {
+                        endNode = networkBehaviour.railwayNetwork.GetRandomNode();
+                    }
+                    else
+                    {
+                        RoutingTableElement element = routingTable.elements[_routingTableIndex];
+                        IWaypoint nextWaypoint = networkBehaviour.railwayNetwork.Waypoints[element.waypointName];
+                        endNode = networkBehaviour.railwayNetwork.GetNodeAtIndex(nextWaypoint.RailNodeIndex,
+                            element.side);
+                        _stopAtNextWaypoint = nextWaypoint.IsStoppedAt;
+                        _waypointLeaveCondition = element.leaveCondition;
+                        if (_waypointLeaveCondition == LeaveCondition.AfterTime)
+                            _waitTimer = element.waitTime;
+                        _routingTableIndex = (_routingTableIndex + 1) % routingTable.elements.Count;
+                    }
+
+                    GetRoute(_previousNode, endNode);
+                    MoveAlongPath(Time.deltaTime, IsFront);
+                }
+
+                float distLeft = _route.GetDistanceToEnd(_distanceTravelled + _speed * Time.deltaTime)-0.2f;
+                if (_stopAtNextWaypoint && !_waiting && distLeft < 0.1f)
+                {
+                    _stopAtNextWaypoint = false;
+                    _waiting = true;
+                }
+
+                if (_waiting && _waypointLeaveCondition == LeaveCondition.AfterTime && _speed <= 0f)
+                {
+                    _waitTimer -= Time.deltaTime;
+                    if (_waitTimer <= 0f)
+                    {
+                        _waiting = false;
+                    }
+                }
+                bool slowDown = (_stopAtNextWaypoint && distLeft <= StoppingDistance) || _waiting;
+                float acc = slowDown ? -acceleration : acceleration;
+                _speed += acc * Time.deltaTime;
+                _speed = Mathf.Clamp(_speed, 0, maxSpeed);
+                //ConstantDebug.Log($"{_speed} | {acc} | {_stopAtNextWaypoint} | {distLeft} | {_waitTimer} | {_waypointLeaveCondition}", this);
             }
         }
 
@@ -181,12 +255,12 @@ namespace MrWhimble.RailwayMaker.Train
                 sectionData = route.sections[0];
                 curve = sectionData.curve;
 
-                _distanceTravelled += speed * delta;
+                _distanceTravelled += _speed * delta;
                 if (_distanceTravelled >= curve.Length)
                 {
                     _previousNode = sectionData.node;
                     _distanceTravelled -= curve.Length;
-                    _distanceTravelled += speed * delta;
+                    _distanceTravelled += _speed * delta;
                     
                     route.sections.RemoveAt(0);
                     
@@ -244,6 +318,11 @@ namespace MrWhimble.RailwayMaker.Train
             Quaternion rotation = curve.GetRotation(t, sectionData.reverse);
             transform.SetPositionAndRotation(position, rotation);
             return true;
+        }
+
+        public void Go()
+        {
+            _waiting = false;
         }
         /*
         private bool MoveAlongPath(float delta)
@@ -318,6 +397,12 @@ namespace MrWhimble.RailwayMaker.Train
             return false;
         }
         */
+
+        private float GetStoppingDistance(float currentSpeed)
+        {
+            float dist = (currentSpeed * currentSpeed) / (2 * acceleration);
+            return Mathf.Abs(dist);
+        }
 
         private void DebugPath(Node start, Node end, List<Node> p, float t)
         {

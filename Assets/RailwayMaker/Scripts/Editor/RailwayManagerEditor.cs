@@ -80,6 +80,8 @@ namespace MrWhimble.RailwayMaker
             _constrainedAxis = new bool[3];
 
             _snapping = false;
+
+            Tools.current = Tool.View;
         }
 
         private void OnDisable()

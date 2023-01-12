@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using MrWhimble.RailwayMaker.Routing;
 
 namespace MrWhimble.RailwayMaker.Graph
 {
@@ -10,6 +12,9 @@ namespace MrWhimble.RailwayMaker.Graph
         private List<BezierCurve> curves;
 
         private List<RailNode> railNodes;
+
+        private Dictionary<string, IWaypoint> _waypoints;
+        public Dictionary<string, IWaypoint> Waypoints => _waypoints;
 
         public RailwayNetwork(RailwayManager m)
         {
@@ -116,8 +121,15 @@ namespace MrWhimble.RailwayMaker.Graph
                 }
             }
             
+            var waypoints = GameObject.FindObjectsOfType<MonoBehaviour>().OfType<IWaypoint>();
+            _waypoints = new Dictionary<string, IWaypoint>();
+            foreach (var wp in waypoints)
+            {
+                _waypoints.Add(wp.Name, wp);
+            }
+
             //DebugRailNodes(railNodes, 2f);
-            
+
             //yield break;
         }
 
@@ -197,11 +209,18 @@ namespace MrWhimble.RailwayMaker.Graph
         public RouteState GetRoute(Node startNode, Vector3 direction, Node endNode, ref RailwayRoute route)
         {
             //route = null;
-            
+
             if (startNode == null || endNode == null)
+            {
+                Debug.LogError("start or end node is null!");
                 return RouteState.Failed;//yield break;
+            }
+
             if (startNode == endNode)
+            {
+                Debug.LogError("start and end node are the same!");
                 return RouteState.Failed;
+            }
 
             List<Node> openList = new List<Node>();
             openList.Add(startNode);
@@ -295,23 +314,6 @@ namespace MrWhimble.RailwayMaker.Graph
             return RouteState.Failed;
         }
 
-        public RouteState GetRoute(RoutingTable table, ref RailwayRoute route)
-        {
-            IWaypoint waypoint = GameObject.Find(table.elements[0].waypointName).GetComponent<IWaypoint>();
-            BezierCurve curve = curves[waypoint.CurveIndex];
-            RailNode railNode = null;
-            for (int i = 0; i < railNodes.Count; i++)
-            {
-                if (railNodes[i].anchor == curve.start)
-                {
-                    railNode = railNodes[i];
-                }
-            }
-            Node node = railNode.GetNode(table.elements[0].side);
-
-            return RouteState.Failed;
-        }
-
         private List<Neighbour> GetNeighbours(Vector3 direction, List<Neighbour> allNeighbours)
         {
             List<Neighbour> ret = new List<Neighbour>();
@@ -328,9 +330,9 @@ namespace MrWhimble.RailwayMaker.Graph
 
         private void ConstructRoute(ref RailwayRoute route, Node start, Node end, Dictionary<Node, Score> scores)
         {
-            List<RouteSectionData> routesectionDatas = new List<RouteSectionData>();
+            List<RouteSectionData> routeSectionDatas = new List<RouteSectionData>();
                     
-            routesectionDatas.Insert(0, new RouteSectionData()
+            routeSectionDatas.Insert(0, new RouteSectionData()
             {
                 node = end,
                 curve = null,
@@ -344,7 +346,7 @@ namespace MrWhimble.RailwayMaker.Graph
             while (p != start)
             {
                 c = GetCurveFromNodes(p, next);
-                routesectionDatas.Insert(0, new RouteSectionData()
+                routeSectionDatas.Insert(0, new RouteSectionData()
                 {
                     node = p,
                     curve = c,
@@ -355,7 +357,7 @@ namespace MrWhimble.RailwayMaker.Graph
             }
             
             c = GetCurveFromNodes(p, next);
-            routesectionDatas.Insert(0, new RouteSectionData()
+            routeSectionDatas.Insert(0, new RouteSectionData()
             {
                 node = p,
                 curve = c,
@@ -364,7 +366,7 @@ namespace MrWhimble.RailwayMaker.Graph
 
             if (route == null)
                 route = new RailwayRoute();
-            route.sections = routesectionDatas;
+            route.sections = routeSectionDatas;
         }
 
         private BezierCurve GetCurveFromNodes(Node a, Node b)

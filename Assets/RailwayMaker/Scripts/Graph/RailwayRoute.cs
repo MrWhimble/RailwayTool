@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MrWhimble.RailwayMaker.Graph
 {
@@ -40,6 +41,22 @@ namespace MrWhimble.RailwayMaker.Graph
             else
                 distance = 0f;
             return;
+        }
+
+        public float GetDistanceToEnd(float currentDistanceAlongFirstCurve)
+        {
+            if (!HasRoute)
+                return Mathf.Infinity;
+            
+            float dist = 0f;
+
+            for (int i = sections.Count - 2; i >= 0; i--)
+            {
+                dist += sections[i].curve.Length;
+            }
+            dist -= currentDistanceAlongFirstCurve;
+
+            return dist;
         }
     }
 }

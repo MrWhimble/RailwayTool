@@ -13,11 +13,19 @@ MonoBehaviour:
   m_Name: new RoutingTable
   m_EditorClassIdentifier: 
   elements:
-  - waypointName: GameObject
+  - waypointName: Waypoint (0)
     side: 1
     leaveCondition: 0
-    waitTime: 0
-  - waypointName: Not a GameObject
+    waitTime: 2
+  - waypointName: Waypoint (1)
+    side: 0
+    leaveCondition: 1
+    waitTime: 1
+  - waypointName: Waypoint (2)
     side: 1
     leaveCondition: 0
-    waitTime: 0
+    waitTime: 3
+  - waypointName: Waypoint (1)
+    side: 1
+    leaveCondition: 0
+    waitTime: 5

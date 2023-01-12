@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MrWhimble.RailwayMaker
+namespace MrWhimble.RailwayMaker.Routing
 {
     public enum LeaveCondition
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace MrWhimble.RailwayMaker
+namespace MrWhimble.RailwayMaker.Routing
 {
     [CustomPropertyDrawer(typeof(RoutingTableElement))]
     public class RoutingTableElementPropertyDrawer : PropertyDrawer
@@ -59,9 +59,9 @@ namespace MrWhimble.RailwayMaker
             
             IndentRect(ref position, true);
             
-            if (WaypointEditorManager.Waypoints[selectedIndex] is Station)
+            if (WaypointEditorManager.Waypoints[selectedIndex].IsStoppedAt)
             {
-                EditorGUI.LabelField(position, "Station Settings:");
+                EditorGUI.LabelField(position, "Stop Settings:");
                 position.y += 20;
                 SerializedProperty leaveConditionProp = property.FindPropertyRelative("leaveCondition");
                 EditorGUI.PropertyField(position, leaveConditionProp);
@@ -73,7 +73,7 @@ namespace MrWhimble.RailwayMaker
             }
             else
             {
-                EditorGUI.LabelField(position, "Is Not a Station");
+                EditorGUI.LabelField(position, "No Stopping");
             }
             IndentRect(ref position, false);
 

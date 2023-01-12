@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MrWhimble.RailwayMaker
+namespace MrWhimble.RailwayMaker.Routing
 {
     public class Waypoint : MonoBehaviour, IWaypoint
     {
         GameObject IWaypoint.gameObject => this.gameObject;
         
+        /*
         [SerializeField, HideInInspector] private int _curveIndex;
         public int CurveIndex
         {
@@ -19,7 +20,17 @@ namespace MrWhimble.RailwayMaker
         {
             get => _ratioAlongCurve;
             set => _ratioAlongCurve = Mathf.Clamp01(value);
+        }*/
+
+        [SerializeField, HideInInspector] private int _railNodeIndex;
+
+        public int RailNodeIndex
+        {
+            get => _railNodeIndex;
+            set => _railNodeIndex = value;
         }
+
+        public bool IsStoppedAt => false;
         
         [SerializeField] private string waypointName;
         public string Name

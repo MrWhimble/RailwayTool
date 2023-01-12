@@ -155,6 +155,49 @@ namespace MrWhimble.RailwayMaker
             return new CurveDistanceData(bestCurveIndex, bestDist, bestT);
         }
 
+        public static int GetClosestRailNodeIndexToPointUsingPathData(RailPathData pathData, Vector3 point)
+        {
+            int index = 0;
+            float bestDist = Mathf.Infinity;
+            int bestIndex = -1;
+            
+            foreach (var a in pathData.pathPoints)
+            {
+                if (a.pointType == PathPoint.PathPointTypes.Control)
+                    continue;
+
+                float dist = Vector3.Distance(point, a.position);
+                if (dist < bestDist)
+                {
+                    bestIndex = index;
+                    bestDist = dist;
+                }
+
+                index++;
+            }
+
+            return bestIndex;
+        }
+
+        public static int GetAnchorPointIndexFromRailNodeIndex(List<PathPoint> pathPoints, int railNodeIndex)
+        {
+            int index = 0;
+            for (int i = 0; i < pathPoints.Count; i++)
+            {
+                if (pathPoints[i].pointType == PathPoint.PathPointTypes.Control)
+                    continue;
+
+                if (railNodeIndex == index)
+                {
+                    return i;
+                }
+
+                index++;
+            }
+
+            return -1;
+        }
+
         public static Vector3 GetPointFromTOnCubicBezierCurve(Vector3 start, Vector3 controlStart, Vector3 controlEnd, Vector3 end, float t)
         {
             float m = 1f - t;

@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-namespace MrWhimble.RailwayMaker
+namespace MrWhimble.RailwayMaker.Routing
 {
     [InitializeOnLoad]
     public static class WaypointEditorManager
@@ -65,10 +65,16 @@ namespace MrWhimble.RailwayMaker
                 foreach (var index in changedIndexes)
                 {
                     //Handles.DrawLine(_waypoints[index].gameObject.transform.position, _waypoints[index].gameObject.transform.position + Vector3.up * 8f);
-                    var data = CurveUtility.GetClosestCurveToPointUsingPathData(_railwayManager.PathData,
+                    //var data = CurveUtility.GetClosestCurveToPointUsingPathData(_railwayManager.PathData,
+                    //    _waypoints[index].gameObject.transform.position);
+                    //_waypoints[index].CurveIndex = data.curveIndex;
+                    //_waypoints[index].RatioAlongCurve = data.t;
+                    //EditorUtility.SetDirty(_waypoints[index].gameObject);
+                    int railNodeIndex = CurveUtility.GetClosestRailNodeIndexToPointUsingPathData(
+                        _railwayManager.PathData,
                         _waypoints[index].gameObject.transform.position);
-                    _waypoints[index].CurveIndex = data.curveIndex;
-                    _waypoints[index].RatioAlongCurve = data.t;
+
+                    _waypoints[index].RailNodeIndex = railNodeIndex;
                     EditorUtility.SetDirty(_waypoints[index].gameObject);
                 }
             }
@@ -86,10 +92,15 @@ namespace MrWhimble.RailwayMaker
                 
                 Vector3 pos = go.transform.position;
 
-                Vector3[] p = CurveUtility.GetCurvePointsUsingPathData(
-                    _railwayManager.PathData.pathCurves[_waypoints[i].CurveIndex], 
-                    _railwayManager.PathData.pathPoints);
-                Vector3 point = CurveUtility.GetPointFromTOnCubicBezierCurve(p, _waypoints[i].RatioAlongCurve);
+                //Vector3[] p = CurveUtility.GetCurvePointsUsingPathData(
+                //    _railwayManager.PathData.pathCurves[_waypoints[i].CurveIndex], 
+                //    _railwayManager.PathData.pathPoints);
+                //Vector3 point = CurveUtility.GetPointFromTOnCubicBezierCurve(p, _waypoints[i].RatioAlongCurve);
+
+                int anchorIndex = CurveUtility.GetAnchorPointIndexFromRailNodeIndex(_railwayManager.PathData.pathPoints,
+                    _waypoints[i].RailNodeIndex);
+                Vector3 point = _railwayManager.PathData.pathPoints[anchorIndex].position;
+                
                 Handles.DrawLine(pos, point);
             }
         }
