@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dd32e61281248dabcda6edd53fe9b77, type: 3}
   m_Name: new RoutingTable 1
   m_EditorClassIdentifier: 
-  elements: []
+  elements:
+  - waypointName: Waypoint (1)
+    side: 1
+    leaveCondition: 0
+    waitTime: 0
+  - waypointName: Waypoint (2)
+    side: 0
+    leaveCondition: 0
+    waitTime: 0

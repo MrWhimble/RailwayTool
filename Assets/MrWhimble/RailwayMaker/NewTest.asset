@@ -139,17 +139,17 @@ MonoBehaviour:
     flipped: 0
     connectedPoints: 17000000
   - pointType: 1
-    position: {x: 10.019987, y: 0, z: -17.022507}
+    position: {x: 10.004696, y: -0.58052826, z: -17.641733}
     rotation: {x: 0, y: 0.9999998, z: 0, w: -0.0006188964}
     flipped: 1
     connectedPoints: 1a000000
   - pointType: 0
-    position: {x: 10.010903, y: 0, z: -19.997929}
+    position: {x: 9.995612, y: -0.58052826, z: -20.617155}
     rotation: {x: 0, y: 0.99999887, z: -0, w: -0.0015264588}
     flipped: 1
     connectedPoints: 1b00000019000000
   - pointType: 1
-    position: {x: 9.992735, y: 0, z: -25.949139}
+    position: {x: 9.977444, y: -0.58052826, z: -26.568365}
     rotation: {x: 0, y: 0.99999887, z: -0, w: -0.0015264588}
     flipped: 0
     connectedPoints: 1a000000
@@ -240,17 +240,17 @@ MonoBehaviour:
     connectedPoints: 2d000000
   - pointType: 0
     position: {x: -49.888443, y: 0, z: -29.96423}
-    rotation: {x: 0, y: 0.7068931, z: 0, w: 0.7073205}
+    rotation: {x: 0, y: 0.70689297, z: 0, w: 0.7073205}
     flipped: 0
     connectedPoints: 3b0000002c000000
   - pointType: 1
     position: {x: -33.971718, y: 0, z: -29.922066}
-    rotation: {x: 0, y: 0.7068931, z: 0, w: 0.7073205}
+    rotation: {x: 0, y: 0.70689297, z: 0, w: 0.7073205}
     flipped: 0
     connectedPoints: 2a000000
   - pointType: 1
     position: {x: -29.917885, y: 0, z: -26.01209}
-    rotation: {x: 0, y: 0.7068931, z: 0, w: 0.7073205}
+    rotation: {x: 0, y: 0.70689297, z: 0, w: 0.7073205}
     flipped: 1
     connectedPoints: 30000000
   - pointType: 0
@@ -300,27 +300,27 @@ MonoBehaviour:
     connectedPoints: 39000000
   - pointType: 0
     position: {x: -59.975388, y: 0, z: -20.000784}
-    rotation: {x: 0, y: 0.0019116639, z: 0, w: 0.9999982}
+    rotation: {x: 0, y: 0.0019117536, z: 0, w: 0.9999982}
     flipped: 0
     connectedPoints: 3a00000038000000
   - pointType: 1
-    position: {x: -59.99803, y: 0, z: -25.923307}
-    rotation: {x: 0, y: 0.0019116639, z: 0, w: 0.9999982}
+    position: {x: -59.9832, y: 0, z: -22.044054}
+    rotation: {x: 0, y: 0.0019117536, z: 0, w: 0.9999982}
     flipped: 1
     connectedPoints: 39000000
   - pointType: 1
-    position: {x: -55.95691, y: 0, z: -29.967897}
-    rotation: {x: 0, y: 0.0019116639, z: 0, w: 0.9999982}
+    position: {x: -53.86329, y: 0, z: -29.966633}
+    rotation: {x: 0, y: 0.0019117536, z: 0, w: 0.9999982}
     flipped: 1
     connectedPoints: 2d000000
   - pointType: 1
     position: {x: -59.981018, y: 0, z: -5.115585}
-    rotation: {x: 0, y: 0.0019116639, z: 0, w: 0.9999982}
+    rotation: {x: 0, y: 0.0019117536, z: 0, w: 0.9999982}
     flipped: 0
     connectedPoints: 36000000
   - pointType: 1
     position: {x: -59.996708, y: 0, z: 5.029414}
-    rotation: {x: 0, y: 0.0019116639, z: 0, w: 0.9999982}
+    rotation: {x: 0, y: 0.0019117536, z: 0, w: 0.9999982}
     flipped: 1
     connectedPoints: 3e000000
   - pointType: 0
@@ -633,6 +633,21 @@ MonoBehaviour:
     rotation: {x: 0.00076857687, y: 0.7040756, z: -0.00135826, w: 0.71012336}
     flipped: 0
     connectedPoints: 7a000000
+  - pointType: 1
+    position: {x: -59.50732, y: 0, z: -23.863806}
+    rotation: {x: 0.00076857687, y: 0.7040756, z: -0.00135826, w: 0.71012336}
+    flipped: 1
+    connectedPoints: 7d000000
+  - pointType: 0
+    position: {x: -58.63138, y: 0, z: -25.37091}
+    rotation: {x: 0, y: 0.9655509, z: 0, w: 0.26021424}
+    flipped: 1
+    connectedPoints: 7e0000007c000000
+  - pointType: 1
+    position: {x: -56.968353, y: 0, z: -28.232231}
+    rotation: {x: 0, y: 0.9655509, z: 0, w: 0.26021424}
+    flipped: 0
+    connectedPoints: 7d000000
   pathCurves:
   - start: 0
     controlStart: 1
@@ -710,10 +725,6 @@ MonoBehaviour:
     controlStart: 55
     controlEnd: 56
     end: 57
-  - start: 57
-    controlStart: 58
-    controlEnd: 59
-    end: 45
   - start: 54
     controlStart: 60
     controlEnd: 61
@@ -806,3 +817,11 @@ MonoBehaviour:
     controlStart: 123
     controlEnd: 120
     end: 103
+  - start: 57
+    controlStart: 58
+    controlEnd: 124
+    end: 125
+  - start: 125
+    controlStart: 126
+    controlEnd: 59
+    end: 45

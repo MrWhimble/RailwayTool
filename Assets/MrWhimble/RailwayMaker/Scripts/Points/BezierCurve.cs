@@ -187,81 +187,59 @@ namespace MrWhimble.RailwayMaker
 
             distanceList = new float[segments];
 
-            float tStep = 1f / (float) (segments-1);
-            float tTotal = 0f;
-            float tDelta = tStep/20f;
+            float distStep = Length / (float) (segments - 1);
             float totalDistance = 0f;
-            int index = 0;
-            Vector3 prevPos = GetPosition(0f);
-
+            int distIndex = 0;
+            Vector3 prevPos = GetPosition(0);
+            float tDelta = 1 / 200f;
             for (float t = 0f; t <= 1.0001f; t += tDelta)
             {
                 Vector3 pos = GetPosition(t);
-                totalDistance += (prevPos - pos).magnitude;
-                if (tTotal <= t)
+                Vector3 dir = (prevPos - pos);
+                float dirMag = dir.magnitude;
+                totalDistance += dirMag;
+                if (totalDistance >= distIndex * distStep)
                 {
-                    tTotal += tStep;
-
-                    if (totalDistance > length / 2)
-                        halfwayIndex = index;
-                    distanceList[index] = totalDistance;
-                    index++;
+                    float overshoot = totalDistance - (distIndex * distStep);
+                    float ratio = overshoot / dirMag;
+                    distanceList[distIndex] = t - (tDelta * ratio); 
+                    distIndex++;
                 }
-                
                 prevPos = pos;
             }
-
+            
             distanceList[0] = 0f;
-            distanceList[^1] = length;
+            distanceList[^1] = 1f;
         }
         
         public float GetTFromDistance(float distance)
         {
-            int index;
-            float tLerp;
-            (index, tLerp) = GetIndexAtBiggestDistanceBelowInput(distance);
-            int lowIndex = index - 1;
-            if (lowIndex == -1)
-                return 0f;
+            int segments = distanceList.Length;
+            float distanceRatio = distance / Length;
+            int distanceIndex = Mathf.FloorToInt(distanceRatio * (float)(segments-1));
+            float distanceStep = Length / (float) (segments - 1);
+            float distanceOvershoot = distance - distanceStep * (float)distanceIndex;
+            float tRatio = distanceOvershoot / distanceStep;
+            float tNext = distanceList[Mathf.Min(distanceList.Length-1, distanceIndex+1)];
+            float tNow = distanceList[distanceIndex];
+            float tDiff = tNext - tNow;
 
-            float t = 1f * ((float) lowIndex / (float) (distanceList.Length - 1));
-            t += tLerp;
-            
-            return t;
+            return tNow + tDiff * tRatio;
         }
 
-        private (int, float) GetIndexAtBiggestDistanceBelowInput(float dist)
+        public Vector3 GetPosFromDistance(float distance)
         {
-            int distanceListLength = distanceList.Length - 1;
-            float tDelta = 1f / (float) distanceList.Length;
-            if (dist < length*0.5f)
-            {
-                
-                int largestIndex = halfwayIndex;
-                for (int i = largestIndex; i >= 1; i--) 
-                {
-                    int otherIndex = i - 1;
-                    if (distanceList[otherIndex] <= dist && distanceList[i] >= dist)
-                    {
-                        return (i, tDelta * Mathf.InverseLerp(distanceList[otherIndex], distanceList[i], dist));
-                    }
-                }
-            }
-            else
-            {
-                
-                int largestIndex = Mathf.CeilToInt(distanceListLength);
-                for (int i = largestIndex; i > 0; i--)
-                {
-                    int otherIndex = i - 1;
-                    if (distanceList[otherIndex] <= dist && distanceList[i] >= dist)
-                    {
-                        return (i, tDelta * Mathf.InverseLerp(distanceList[otherIndex], distanceList[i], dist));
-                    }
-                }
-            }
+            int segments = distanceList.Length;
+            float distanceRatio = distance / Length;
+            int distanceIndex = Mathf.FloorToInt(distanceRatio * (float)(segments-1));
+            float distanceStep = Length / (float) (segments - 1);
+            float distanceOvershoot = distance - distanceStep * (float)distanceIndex;
+            float tRatio = distanceOvershoot / distanceStep;
+            Vector3 posNext = GetPosition(distanceList[Mathf.Min(distanceList.Length - 1, distanceIndex + 1)]);
+            Vector3 posNow = GetPosition(distanceList[distanceIndex]);
+            Vector3 posDiff = posNext - posNow;
 
-            return (-1, 0f);
+            return GetPosition(distanceList[distanceIndex]) + posDiff * tRatio;
         }
     }
 }

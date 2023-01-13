@@ -32,6 +32,6 @@ MonoBehaviour:
   RailNormalThickness: 1
   RailNormalLength: 0.2
   SplitLineThickness: 1
-  WaypointConnectionLineThickness: 0
+  WaypointConnectionLineThickness: 1
   RailNormalCount: 20
   SplitDistantSearchCount: 20

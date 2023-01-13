@@ -98,6 +98,8 @@ namespace MrWhimble.RailwayMaker.Train
             _routingTableIndex = 0;
 
             _speed = 0f;
+            _waiting = false;
+            _stopAtNextWaypoint = false;
         }
         
         private void Start()
@@ -310,7 +312,8 @@ namespace MrWhimble.RailwayMaker.Train
             t = curve.GetTFromDistance(_distanceTravelled);
             if (sectionData.reverse)
                 t = 1f - t;
-            Vector3 position = curve.GetPosition(t);
+            //Vector3 position = curve.GetPosition(t);
+            Vector3 position = curve.GetPosFromDistance(sectionData.reverse ? curve.Length - _distanceTravelled : _distanceTravelled);
             Quaternion rotation = curve.GetRotation(t, sectionData.reverse);
             position += (rotation * offset);
             transform.SetPositionAndRotation(position, rotation);

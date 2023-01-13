@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 103564088}
@@ -203,6 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 239659986}
@@ -252,6 +254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 1863302525}
@@ -302,6 +305,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 1956282476}
@@ -1112,6 +1116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 190735068}
@@ -1357,6 +1362,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 34327004}
@@ -1498,7 +1504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   curveSegments: 20
-  trackSeparation: 1
+  trackSeparation: 0.2
   trackHeight: 0.05
   trackWidth: 0.025
 --- !u!114 &1474970951
@@ -1938,6 +1944,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 11400000, guid: e3e6cec8c8764bd46997d858b57368e6, type: 2}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 1
   maxSpeed: 12
   leader: {fileID: 0}
@@ -2050,6 +2057,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkBehaviour: {fileID: 1474970951}
   routingTable: {fileID: 0}
+  offset: {x: 0, y: 0, z: 0}
   acceleration: 0
   maxSpeed: 0
   leader: {fileID: 1099919684}

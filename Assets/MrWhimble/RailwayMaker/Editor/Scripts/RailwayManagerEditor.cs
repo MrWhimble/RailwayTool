@@ -111,6 +111,11 @@ namespace MrWhimble.RailwayMaker
             }
             serializedObject.ApplyModifiedProperties();
             
+            if (_pathDataProp.objectReferenceValue == null)
+            {
+                return;
+            }
+            
             EditorGUILayout.Space();
 
             if (GUILayout.Button("Create New Curve"))
@@ -247,6 +252,10 @@ namespace MrWhimble.RailwayMaker
 
         private void OnSceneGUI()
         {
+            if (_pathDataProp.objectReferenceValue == null || _points == null || _points.Count == 0)
+            {
+                return;
+            }
 
             _closestPointIndex = -1;
             if (_movingPointIndex != -1)
@@ -601,8 +610,10 @@ namespace MrWhimble.RailwayMaker
         {
             _oldAnchor = anchor;
             _newAnchor = new AnchorPoint(anchor.position, anchor.rotation);
-            _newControlStart = new ControlPoint(anchor, 1f, false);
-            _newControlEnd = new ControlPoint(_newAnchor, 1f, true);
+            float dist = RailwayEditorSettings.Instance.AnchorSize * 2f +
+                         RailwayEditorSettings.Instance.ControlSize * 2f;
+            _newControlStart = new ControlPoint(anchor, dist, false);
+            _newControlEnd = new ControlPoint(_newAnchor, dist, true);
             BezierCurve curve = new BezierCurve(_oldAnchor, _newControlStart, _newControlEnd, _newAnchor);
             AddCurve_Internal(curve);
             _updateNewCurve = true;

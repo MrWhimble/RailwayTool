@@ -1,6 +1,6 @@
 # Railway Maker
 
-FOR MORE DETAILS, GO TO: 
+FOR MORE DETAILS, GO TO: https://github.com/MrWhimble/RailwayTool/wiki
 
 ## Customisation
 
@@ -15,9 +15,13 @@ To change the colors, sizes, and other settings; go to Edit > Preferences > MrWh
         * RailwayMeshManager (if you want to generate a visible mesh)
         * RailwayNetworkBehaviour (if you want to have an object go around the track)
 
-2. Create a new curve by clicking "Create New Curve"
+2. Create a new rail path by right-clicking assets and clicking: Create > MrWhimble > Rail Path Data
 
-3. build your track:
+3. Drag the new rail path into the RailwayManager script
+
+4. Create a new curve by clicking "Create New Curve"
+
+5. build your track:
     Controls:
     (MoveAdd):
         * click on a point to move it
@@ -34,7 +38,7 @@ To change the colors, sizes, and other settings; go to Edit > Preferences > MrWh
         * use the constraints to lock the axis of a point will moving it
         * if a control point is on the wrong side, select it and change "flipped"
 
-#### Tracks save whenever the RailwayManager is closed!!!
+### Tracks save whenever the RailwayManager is closed!!!
 
 
 
@@ -78,20 +82,20 @@ Use a waypoint to go straight past a stop
 Waypoints and stations draw a line to where on the track they are
 Waypoints and stations connect to anchors on the track, if there is no anchor where the waypoint/station needs to be, split the track at that position
 
-2. Create a new routing table by right-clicking assets and clicking: Create > MrWhimble > Routing Table
+3. Create a new routing table by right-clicking assets and clicking: Create > MrWhimble > Routing Table
 
-3. Click the "+" button to add a new waypoint/station
+4. Click the "+" button to add a new waypoint/station
 
-4. Select to waypoint/station for the dropdown next to name
+5. Select to waypoint/station for the dropdown next to name
 
-5. Repeat steps 3 and 4 until all required waypoints/station have been added
+6. Repeat steps 3 and 4 until all required waypoints/station have been added
 
-6. If the route is going the wrong way, change the side
+7. If the route is going the wrong way, change the side
 
-7. Assign the leave condition of the stations
+8. Assign the leave condition of the stations
         * if the leave condition is "After Time" then the train will wait for that amount of time before going
         * if the leave condition is "After Event" then the train only leaves once the Go() function is called on the lead bogie
 
-8. Assign the routing table to the lead bogie
+9. Assign the routing table to the lead bogie
 
-#### Check the console if the route does not yield a loop
+### Check the console if the route does not yield a loop
