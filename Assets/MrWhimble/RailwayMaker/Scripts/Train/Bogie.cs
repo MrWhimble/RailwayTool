@@ -11,6 +11,8 @@ namespace MrWhimble.RailwayMaker.Train
 
         [SerializeField] private RoutingTable routingTable;
 
+        [SerializeField] private Vector3 offset;
+        
         [SerializeField, Min(0.0001f)] private float acceleration; 
         [SerializeField, Min(0f)] private float maxSpeed;
         private float _speed;
@@ -310,6 +312,7 @@ namespace MrWhimble.RailwayMaker.Train
                 t = 1f - t;
             Vector3 position = curve.GetPosition(t);
             Quaternion rotation = curve.GetRotation(t, sectionData.reverse);
+            position += (rotation * offset);
             transform.SetPositionAndRotation(position, rotation);
             return true;
         }

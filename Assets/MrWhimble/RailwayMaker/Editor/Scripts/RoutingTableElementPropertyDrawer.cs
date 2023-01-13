@@ -26,6 +26,12 @@ namespace MrWhimble.RailwayMaker.Routing
             }
             position.y += 20;
 
+            if (selectedIndex < 0 || selectedIndex >= WaypointEditorManager.Waypoints.Count)
+            {
+                EditorGUI.EndProperty();
+                return;
+            }
+            
             SerializedProperty waypointSideProp = property.FindPropertyRelative("side");
             int sideIndex = waypointSideProp.boolValue ? 1 : 0;
             EditorGUI.BeginChangeCheck();

@@ -70,7 +70,7 @@ namespace MrWhimble.RailwayMaker
         [Min(0f)] public float RailNormalThickness = 1f;
         public float RailNormalLength = 0.2f;
         [Min(0f)] public float SplitLineThickness = 1f;
-        [Min(0f)] public float WaypointConnectionLineThickness;
+        [Min(0f)] public float WaypointConnectionLineThickness = 1f;
 
         [Min(2)] public int RailNormalCount = 20;
         [Min(2)] public int SplitDistantSearchCount = 25;
