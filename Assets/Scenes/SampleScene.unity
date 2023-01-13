@@ -351,6 +351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startBogie: {fileID: 34327004}
   endBogie: {fileID: 1468792040}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &312326999
 Transform:
   m_ObjectHideFlags: 0
@@ -1001,6 +1002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startBogie: {fileID: 1956282476}
   endBogie: {fileID: 1099919684}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &1066523499
 Transform:
   m_ObjectHideFlags: 0
@@ -1261,6 +1263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startBogie: {fileID: 1863302525}
   endBogie: {fileID: 190735068}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &1389477588
 Transform:
   m_ObjectHideFlags: 0
@@ -1308,7 +1311,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _railNodeIndex: 20
-  stationName: 
 --- !u!4 &1419235948
 Transform:
   m_ObjectHideFlags: 0
@@ -1496,7 +1498,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   curveSegments: 20
-  trackSeperation: 0.2
+  trackSeparation: 1
   trackHeight: 0.05
   trackWidth: 0.025
 --- !u!114 &1474970951
@@ -1541,7 +1543,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _railNodeIndex: 0
-  stationName: 
 --- !u!4 &1503051220
 Transform:
   m_ObjectHideFlags: 0
@@ -1721,7 +1722,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _railNodeIndex: 18
-  stationName: 
 --- !u!4 &1730392191
 Transform:
   m_ObjectHideFlags: 0
@@ -2100,6 +2100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startBogie: {fileID: 239659986}
   endBogie: {fileID: 103564088}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &2039744581
 Transform:
   m_ObjectHideFlags: 0
