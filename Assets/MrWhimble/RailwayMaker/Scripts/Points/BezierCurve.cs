@@ -241,5 +241,21 @@ namespace MrWhimble.RailwayMaker
 
             return GetPosition(distanceList[distanceIndex]) + posDiff * tRatio;
         }
+
+        public Quaternion GetRotFromDistance(float distance, bool flip = false)
+        {
+            int segments = distanceList.Length;
+            float distanceRatio = distance / Length;
+            int distanceIndex = Mathf.FloorToInt(distanceRatio * (float)(segments-1));
+            float distanceStep = Length / (float) (segments - 1);
+            float distanceOvershoot = distance - distanceStep * (float)distanceIndex;
+            float tRatio = distanceOvershoot / distanceStep;
+            
+            float tNext = distanceList[Mathf.Min(distanceList.Length-1, distanceIndex+1)];
+            float tNow = distanceList[distanceIndex];
+            float tDiff = tNext - tNow;
+                    
+            return GetRotation(distanceList[distanceIndex] + tDiff * tRatio, flip);
+        }
     }
 }

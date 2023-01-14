@@ -1,0 +1,196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 067e8b0f20214d19aef09961053b701d, type: 3}
+  m_Name: RailPathData 1
+  m_EditorClassIdentifier: 
+  pathPoints:
+  - pointType: 0
+    position: {x: 0.82922095, y: 2.4370534, z: 7.784342}
+    rotation: {x: 0.8971018, y: 0.12437667, z: -0.4027725, w: 0.1323371}
+    flipped: 0
+    connectedPoints: 0700000001000000
+  - pointType: 1
+    position: {x: -1.1432381, y: 1.4715214, z: 5.9526215}
+    rotation: {x: 0.8971018, y: 0.12437667, z: -0.4027725, w: 0.1323371}
+    flipped: 0
+    connectedPoints: 00000000
+  - pointType: 1
+    position: {x: 1.0914164, y: -0.3225565, z: 3.2878497}
+    rotation: {x: 0.8971018, y: 0.12437667, z: -0.4027725, w: 0.1323371}
+    flipped: 1
+    connectedPoints: 03000000
+  - pointType: 0
+    position: {x: 4, y: 0, z: 1}
+    rotation: {x: 0.0022444895, y: 0.8988603, z: 0.04939019, w: 0.43543753}
+    flipped: 1
+    connectedPoints: 0400000002000000
+  - pointType: 1
+    position: {x: 7.97941, y: 0.44130912, z: -2.1301463}
+    rotation: {x: 0.0022444895, y: 0.8988603, z: 0.04939019, w: 0.43543753}
+    flipped: 0
+    connectedPoints: 03000000
+  - pointType: 1
+    position: {x: 11.165293, y: -1.0551431, z: -3.330716}
+    rotation: {x: 0.0022444895, y: 0.8988603, z: 0.04939019, w: 0.43543753}
+    flipped: 1
+    connectedPoints: 06000000
+  - pointType: 0
+    position: {x: 11.7911, y: 0, z: 0.62497115}
+    rotation: {x: -0.11321582, y: 0.098085605, z: 0.17563185, w: 0.9729928}
+    flipped: 1
+    connectedPoints: 1b0000000500000005000000050000000500000005000000
+  - pointType: 1
+    position: {x: 6.2560167, y: 5.093507, z: 12.823925}
+    rotation: {x: -0.11321582, y: 0.098085605, z: 0.17563185, w: 0.9729928}
+    flipped: 1
+    connectedPoints: 00000000
+  - pointType: 1
+    position: {x: 9.2698, y: 1.4347996, z: 11.841481}
+    rotation: {x: -0.11321582, y: 0.098085605, z: 0.17563185, w: 0.9729928}
+    flipped: 0
+    connectedPoints: 09000000
+  - pointType: 0
+    position: {x: 11.235103, y: 0, z: 8.088264}
+    rotation: {x: -0.22195348, y: -0.17662117, z: 0.25395232, w: 0.92468905}
+    flipped: 0
+    connectedPoints: 0a00000008000000
+  - pointType: 1
+    position: {x: 12.747625, y: -1.1042404, z: 5.19974}
+    rotation: {x: -0.22195348, y: -0.17662117, z: 0.25395232, w: 0.92468905}
+    flipped: 1
+    connectedPoints: 09000000
+  - pointType: 1
+    position: {x: 12.047977, y: 0.43310952, z: 2.24868}
+    rotation: {x: -0.22195348, y: -0.17662117, z: 0.25395232, w: 0.92468905}
+    flipped: 0
+    connectedPoints: 06000000
+  - pointType: 1
+    position: {x: 11.534222, y: -0.43310946, z: -0.9987376}
+    rotation: {x: -0.22195348, y: -0.17662117, z: 0.25395232, w: 0.92468905}
+    flipped: 1
+    connectedPoints: 06000000
+  - pointType: 1
+    position: {x: 9.612394, y: 0.21817982, z: -8.787027}
+    rotation: {x: -0.22195348, y: -0.17662117, z: 0.25395232, w: 0.92468905}
+    flipped: 0
+    connectedPoints: 0e000000
+  - pointType: 0
+    position: {x: 10.92601, y: -1.2469711, z: -10.396452}
+    rotation: {x: -0.37781757, y: -0.20175555, z: 0.21518214, w: 0.8776362}
+    flipped: 0
+    connectedPoints: 0f0000000d000000
+  - pointType: 1
+    position: {x: 11.9906845, y: -2.4344635, z: -11.700877}
+    rotation: {x: -0.37781757, y: -0.20175555, z: 0.21518214, w: 0.8776362}
+    flipped: 1
+    connectedPoints: 0e000000
+  - pointType: 1
+    position: {x: 15.541852, y: -3.7233076, z: -10.482227}
+    rotation: {x: -0.37781757, y: -0.20175555, z: 0.21518214, w: 0.8776362}
+    flipped: 0
+    connectedPoints: 11000000
+  - pointType: 0
+    position: {x: 14.88542, y: -3.1275177, z: -7.9057093}
+    rotation: {x: 0.7920647, y: 0.5877336, z: 0.03202455, w: 0.16179335}
+    flipped: 0
+    connectedPoints: 1200000010000000
+  - pointType: 1
+    position: {x: 14.475866, y: -2.7557995, z: -6.298198}
+    rotation: {x: 0.7920647, y: 0.5877336, z: 0.03202455, w: 0.16179335}
+    flipped: 1
+    connectedPoints: 11000000
+  - pointType: 1
+    position: {x: 11.534222, y: -0.43310946, z: -0.9987376}
+    rotation: {x: 0.7920647, y: 0.5877336, z: 0.03202455, w: 0.16179335}
+    flipped: 1
+    connectedPoints: 06000000
+  - pointType: 1
+    position: {x: 12.047977, y: 0.43310946, z: 2.2486799}
+    rotation: {x: 0.7920647, y: 0.5877336, z: 0.03202455, w: 0.16179335}
+    flipped: 0
+    connectedPoints: 06000000
+  - pointType: 1
+    position: {x: 16.414507, y: -0.8312206, z: 11.352581}
+    rotation: {x: 0.7920647, y: 0.5877336, z: 0.03202455, w: 0.16179335}
+    flipped: 1
+    connectedPoints: 16000000
+  - pointType: 0
+    position: {x: 17.704828, y: -1.3118143, z: 11.29418}
+    rotation: {x: 0.120395854, y: 0.71182376, z: -0.12999766, w: 0.6796414}
+    flipped: 1
+    connectedPoints: 1700000015000000
+  - pointType: 1
+    position: {x: 19.296484, y: -1.9046435, z: 11.22214}
+    rotation: {x: 0.120395854, y: 0.71182376, z: -0.12999766, w: 0.6796414}
+    flipped: 0
+    connectedPoints: 16000000
+  - pointType: 1
+    position: {x: 19.53438, y: -3.9537554, z: 9.874691}
+    rotation: {x: 0.120395854, y: 0.71182376, z: -0.12999766, w: 0.6796414}
+    flipped: 1
+    connectedPoints: 19000000
+  - pointType: 0
+    position: {x: 18.484596, y: -3.3795834, z: 6.7543573}
+    rotation: {x: 0.13055971, y: 0.9745801, z: 0.06538268, w: -0.16992031}
+    flipped: 1
+    connectedPoints: 1a00000018000000
+  - pointType: 1
+    position: {x: 17.950577, y: -3.0875049, z: 5.1670594}
+    rotation: {x: 0.13055971, y: 0.9745801, z: 0.06538268, w: -0.16992031}
+    flipped: 0
+    connectedPoints: 19000000
+  - pointType: 1
+    position: {x: 12.047977, y: 0.4331095, z: 2.24868}
+    rotation: {x: 0.13055971, y: 0.9745801, z: 0.06538268, w: -0.16992031}
+    flipped: 0
+    connectedPoints: 06000000
+  pathCurves:
+  - start: 0
+    controlStart: 1
+    controlEnd: 2
+    end: 3
+  - start: 3
+    controlStart: 4
+    controlEnd: 5
+    end: 6
+  - start: 0
+    controlStart: 7
+    controlEnd: 8
+    end: 9
+  - start: 9
+    controlStart: 10
+    controlEnd: 11
+    end: 6
+  - start: 6
+    controlStart: 12
+    controlEnd: 13
+    end: 14
+  - start: 14
+    controlStart: 15
+    controlEnd: 16
+    end: 17
+  - start: 17
+    controlStart: 18
+    controlEnd: 19
+    end: 6
+  - start: 6
+    controlStart: 20
+    controlEnd: 21
+    end: 22
+  - start: 22
+    controlStart: 23
+    controlEnd: 24
+    end: 25
+  - start: 25
+    controlStart: 26
+    controlEnd: 27
+    end: 6

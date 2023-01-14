@@ -1,5 +1,6 @@
 # Railway Maker
 
+Made by Lewis Bonner (MrWhimble)
 FOR MORE DETAILS, GO TO: https://github.com/MrWhimble/RailwayTool/wiki
 
 ## Customisation
